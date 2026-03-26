@@ -6,403 +6,392 @@
 <title>Ray Arch Academy | Unfolding Space</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-color: #050505;
+  --bg-dark: #030407;
+  --accent-cyan: #00F0FF;
+  --accent-blue: #0044FF;
   --text-main: #FFFFFF;
-  --text-muted: #888888;
-  --accent: #00E5FF;
-  --accent-glow: rgba(0, 229, 255, 0.4);
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-muted: #8A93A6;
+  --glass: rgba(10, 12, 16, 0.6);
+  --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-  /* We make the body very tall to allow for a long scroll journey */
-  height: 500vh; 
+html { scroll-behavior: smooth; }
+body { 
+  background-color: var(--bg-dark); 
+  color: var(--text-main); 
+  font-family: 'Outfit', sans-serif; 
+  overflow-x: hidden; 
   -webkit-font-smoothing: antialiased;
+  cursor: none;
 }
 
-/* CUSTOM SCROLLBAR */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-color); }
-::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+/* CUSTOM CURSOR */
+#cursor-dot { position: fixed; width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--accent-cyan); }
+#cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }
 
-/* FIXED VIEWPORT - This stays on screen while we scroll the body */
-#viewport {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  perspective: 1200px; /* Crucial for 3D effect */
-  overflow: hidden;
-  background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
-}
+/* AMBIENT BACKGROUND GLOW */
+.ambient-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(0, 68, 255, 0.05) 0%, var(--bg-dark) 80%); }
 
-/* NOISE TEXTURE OVERLAY */
-#viewport::after {
-  content: ''; position: absolute; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 999;
-}
+/* NOISE TEXTURE */
+.noise { position: fixed; inset: 0; opacity: 0.03; z-index: -1; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
 /* NAV */
-nav {
-  position: fixed; top: 0; width: 100%; padding: 2rem 4rem;
-  display: flex; justify-content: space-between; align-items: center;
-  z-index: 1000; mix-blend-mode: difference;
-}
-.logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; }
-.logo span { color: var(--accent); }
-.enroll-btn { 
-  background: transparent; border: 1px solid var(--accent); color: var(--accent);
-  padding: 0.6rem 1.5rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem;
-  text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s;
-}
-.enroll-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent-glow); }
+nav { position: fixed; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 2rem 4rem; z-index: 1000; transition: all 0.4s ease; border-bottom: 1px solid transparent; }
+nav.scrolled { background: rgba(3, 4, 7, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); padding: 1rem 4rem; }
+.logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
+.logo svg { width: 20px; height: 20px; fill: var(--accent-cyan); }
+.nav-btn { background: rgba(0, 240, 255, 0.05); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 0.8rem 2rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; transition: all 0.3s; cursor: none; }
+.nav-btn:hover { background: var(--accent-cyan); color: var(--bg-dark); box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
 
-/* PROGRESS INDICATOR */
-.scroll-progress {
-  position: fixed; left: 4rem; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 1rem; z-index: 100; mix-blend-mode: difference;
-}
-.dot { width: 4px; height: 4px; background: var(--text-muted); border-radius: 50%; transition: 0.3s; }
-.dot.active { background: var(--accent); transform: scale(2); box-shadow: 0 0 10px var(--accent); }
+/* MAIN SCROLL CONTAINER */
+/* This defines the total scroll length of the narrative journey */
+#scroll-container { height: 500vh; position: relative; }
 
-/* THE 3D ARCHITECTURAL MODEL */
-#architecture {
-  position: relative;
-  width: 300px; height: 300px;
-  transform-style: preserve-3d;
-  /* Starting position: Isometric */
-  transform: rotateX(60deg) rotateZ(45deg);
-  transition: transform 0.1s linear; /* Smooths out the JS scroll update */
-}
+/* THE FIXED VISUALIZER (The Magic Happens Here) */
+/* This stays pinned to the screen while you scroll down the container */
+#visualizer { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; perspective: 1000px; }
 
-/* INDIVIDUAL LAYERS/PLANES OF THE BUILDING */
-.plane {
-  position: absolute; width: 100%; height: 100%;
-  border: 1px solid var(--glass-border);
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.1s linear, opacity 0.3s, box-shadow 0.3s;
-  background: rgba(10, 10, 10, 0.8);
-  backdrop-filter: blur(5px);
-}
+/* SVG ARCHITECTURAL ENGINE */
+.arch-engine { width: 100%; height: 100%; max-width: 800px; max-height: 800px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
 
-/* Layer Styling */
-.roof { 
-  transform: translateZ(150px); 
-  background: rgba(255,255,255,0.02);
-  border: 2px solid var(--accent);
-  box-shadow: inset 0 0 40px rgba(0, 229, 255, 0.1);
-}
-.floor-2 { transform: translateZ(50px); border-color: rgba(255,255,255,0.2); }
-.floor-1 { transform: translateZ(-50px); border-color: rgba(255,255,255,0.2); }
-.foundation { 
-  transform: translateZ(-150px); 
-  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
-}
+/* SVG Layer Styles */
+.layer { transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; will-change: opacity, transform, stroke-dashoffset; }
+.grid-lines { stroke: rgba(255, 255, 255, 0.05); stroke-width: 1; }
+.wireframe { stroke: var(--accent-cyan); stroke-width: 1.5; fill: none; stroke-dasharray: 2000; stroke-dashoffset: 2000; transition: stroke-dashoffset 0.8s ease; }
+.solid-mass { fill: rgba(255, 255, 255, 0.03); stroke: rgba(255, 255, 255, 0.2); stroke-width: 1; opacity: 0; }
+.render-glow { fill: url(#cyan-glow); opacity: 0; }
+.ui-node { fill: var(--bg-dark); stroke: var(--accent-cyan); stroke-width: 2; opacity: 0; transition: opacity 0.3s; }
 
-/* Grid on planes to look like blueprints */
-.grid-bg {
-  position: absolute; inset: 0;
-  background-image: 
-    linear-gradient(rgba(0, 229, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.5;
-}
+/* SCROLLING CONTENT OVERLAY */
+.content-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.scroll-section { height: 100vh; display: flex; align-items: center; padding: 0 10%; position: relative; }
+.text-block { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-subtle); padding: 4rem; border-radius: 12px; max-width: 500px; pointer-events: auto; opacity: 0.2; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.text-block.active { opacity: 1; transform: translateY(0); box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0, 240, 255, 0.05) inset; }
 
-/* WALLS */
-.wall-n { width: 300px; height: 300px; transform: rotateX(90deg) translateZ(150px); background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); border: 1px solid var(--glass-border); }
-.wall-s { width: 300px; height: 300px; transform: rotateX(-90deg) translateZ(150px); background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent); border: 1px solid var(--glass-border); }
-.wall-e { width: 300px; height: 300px; transform: rotateY(90deg) translateZ(150px); background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent); border: 1px solid var(--glass-border); }
-.wall-w { width: 300px; height: 300px; transform: rotateY(-90deg) translateZ(150px); background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent); border: 1px solid var(--glass-border); }
+/* TYPOGRAPHY IN BLOCKS */
+.phase-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+.phase-tag::before { content: ''; width: 30px; height: 1px; background: var(--accent-cyan); box-shadow: 0 0 5px var(--accent-cyan); }
+.block-title { font-size: 3rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; text-transform: uppercase; }
+.block-desc { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; margin-bottom: 2rem; }
+.tech-pills { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.pill { border: 1px solid rgba(0, 240, 255, 0.3); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.7rem; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-main); background: rgba(0, 240, 255, 0.05); }
 
-/* UI DATA OVERLAYS (Tied to layers) */
-.ui-data {
-  position: absolute;
-  /* Reverse the 3D rotation so text faces the camera */
-  transform: rotateZ(-45deg) rotateX(-60deg);
-  text-align: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.5s;
-  width: 400px;
-}
-.ui-data.visible { opacity: 1; pointer-events: auto; }
+/* ALIGNMENTS FOR DIFFERENT SECTIONS */
+#sec-1 { justify-content: flex-start; } /* Left */
+#sec-2 { justify-content: flex-end; }   /* Right */
+#sec-3 { justify-content: flex-start; } /* Left */
+#sec-4 { justify-content: center; }     /* Center (Contact) */
 
-.ui-title { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.03em; }
-.ui-subtitle { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; }
-.ui-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
-.ui-tags { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
-.ui-tag { font-size: 0.65rem; border: 1px solid var(--glass-border); padding: 0.3rem 0.8rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(0,0,0,0.5); }
+/* CONTACT FORM SPECIAL STYLING */
+#sec-4 .text-block { max-width: 800px; width: 100%; background: rgba(3, 4, 7, 0.85); border-color: rgba(0, 240, 255, 0.2); text-align: center; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; text-align: left; }
+.contact-grid.full { grid-template-columns: 1fr; }
+.neo-input { width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); padding: 1.2rem; border-radius: 6px; color: var(--text-main); font-family: 'Outfit', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s; -webkit-appearance: none; }
+.neo-input:focus { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.02); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+.submit-btn { background: var(--text-main); color: var(--bg-dark); padding: 1.2rem; border: none; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; width: 100%; margin-top: 1.5rem; cursor: none; transition: all 0.3s; }
+.submit-btn:hover { background: var(--accent-cyan); box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); transform: translateY(-2px); }
 
-/* FLOATING INFO PANEL (Right Side) */
-#info-panel {
-  position: fixed; right: 4rem; top: 50%; transform: translateY(-50%);
-  width: 300px; z-index: 100;
-  opacity: 0; transition: opacity 0.5s;
-}
-#info-panel.visible { opacity: 1; }
-.info-box {
-  background: rgba(5,5,5,0.6); backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border); padding: 2rem; border-radius: 8px;
-  position: relative; overflow: hidden;
-}
-.info-box::before { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-.ib-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 1.5rem; }
-.ib-stat { margin-bottom: 1.5rem; }
-.ib-stat h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: var(--text-main); line-height: 1; }
-.ib-stat p { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem; }
+/* FOOTER */
+footer { position: relative; z-index: 10; background: #010101; padding: 4rem 10%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); }
+.f-details { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+.f-details strong { color: var(--text-main); font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
 
-/* FINAL CONTACT FORM OVERLAY */
-#contact-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.8s;
-}
-#contact-overlay.visible { opacity: 1; pointer-events: auto; }
-.contact-card {
-  background: var(--bg-color); border: 1px solid var(--glass-border);
-  padding: 4rem; width: 100%; max-width: 600px; border-radius: 8px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative;
-}
-.contact-card::after {
-  content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-  width: 100px; height: 2px; background: var(--accent); box-shadow: 0 0 15px var(--accent);
-}
-.cc-title { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; }
-.cc-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
-.form-group { margin-bottom: 1.5rem; }
-.form-group input, .form-group select {
-  width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
-  padding: 1rem; color: #fff; font-family: 'Inter', sans-serif; outline: none; transition: 0.3s;
-}
-.form-group input:focus, .form-group select:focus { border-color: var(--accent); background: rgba(0,229,255,0.02); }
-.submit-btn {
-  width: 100%; background: var(--text-main); color: var(--bg-color); border: none;
-  padding: 1.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s; margin-top: 1rem;
-}
-.submit-btn:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-
-/* SCROLL INSTRUCTION */
-.scroll-hint {
-  position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted);
-  z-index: 100; mix-blend-mode: difference; opacity: 1; transition: opacity 0.3s;
-}
-.scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollDown 2s infinite; }
-@keyframes scrollDown { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 50.1% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+/* SCROLL PROMPT */
+.scroll-prompt { position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); z-index: 500; transition: opacity 0.3s; pointer-events: none; }
+.mouse-icon { width: 24px; height: 36px; border: 1px solid var(--text-muted); border-radius: 20px; position: relative; display: flex; justify-content: center; }
+.mouse-wheel { width: 4px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin-top: 6px; animation: scrollWheel 2s infinite cubic-bezier(0.15, 0.41, 0.69, 0.94); box-shadow: 0 0 10px var(--accent-cyan); }
+@keyframes scrollWheel { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
 
 @media(max-width: 900px) {
-  nav { padding: 1.5rem 2rem; } .scroll-progress, #info-panel { display: none; }
-  .ui-data { width: 300px; } .contact-card { padding: 2rem; width: 90%; }
+  nav { padding: 1.5rem 2rem; } .nav-btn { display: none; }
+  .scroll-section { padding: 0 2rem; }
+  .text-block { padding: 2.5rem; }
+  .block-title { font-size: 2.2rem; }
+  .contact-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 2rem; text-align: center; }
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">RAY ARCH<span>.</span></div>
-  <button class="enroll-btn" onclick="scrollToEnd()">Secure Seat</button>
+<div class="ambient-glow"></div>
+<div class="noise"></div>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<nav id="mainNav">
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/></svg>
+    RAY ARCH.
+  </div>
+  <button class="nav-btn" onclick="scrollToEnd()">Apply 2025</button>
 </nav>
 
-<div class="scroll-progress">
-  <div class="dot active" id="dot-0"></div>
-  <div class="dot" id="dot-1"></div>
-  <div class="dot" id="dot-2"></div>
-  <div class="dot" id="dot-3"></div>
-  <div class="dot" id="dot-4"></div>
+<div class="scroll-prompt" id="scroll-prompt">
+  <span>Initiate Sequence</span>
+  <div class="mouse-icon"><div class="mouse-wheel"></div></div>
 </div>
 
-<div class="scroll-hint" id="scroll-hint">
-  <span>Scroll to Unfold Space</span>
-  <div class="scroll-line"></div>
-</div>
+<div id="scroll-container">
 
-<div id="info-panel">
-  <div class="info-box">
-    <div class="ib-label">Academy Matrix</div>
-    <div class="ib-stat"><h4>1200+</h4><p>Architects Trained</p></div>
-    <div class="ib-stat"><h4>94%</h4><p>Selection Rate</p></div>
-    <div class="ib-stat"><h4>SPA / CEPT</h4><p>Top Placements</p></div>
+  <div id="visualizer">
+    <svg class="arch-engine" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cyan-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(0, 240, 255, 0.4)" />
+          <stop offset="100%" stop-color="rgba(0, 240, 255, 0)" />
+        </radialGradient>
+      </defs>
+
+      <g class="layer grid-lines" id="svg-grid">
+        <path d="M400 650 L100 480 L400 310 L700 480 Z" fill="none" />
+        <path d="M400 550 L150 410 L400 270 L650 410 Z" fill="none" />
+        <line x1="250" y1="395" x2="550" y2="565" />
+        <line x1="550" y1="395" x2="250" y2="565" />
+      </g>
+
+      <g class="layer solid-mass" id="svg-solid">
+        <path d="M400 550 L200 440 L400 330 L600 440 Z" />
+        <path d="M400 550 L400 570 L600 460 L600 440 Z" fill="rgba(255,255,255,0.01)" />
+        <path d="M250 412 L250 200 L350 145 L350 357 Z" />
+        <path d="M550 412 L550 200 L450 145 L450 357 Z" />
+        <path d="M150 250 L400 110 L650 250 L400 390 Z" fill="rgba(255,255,255,0.05)" stroke="var(--accent-cyan)" />
+      </g>
+
+      <g class="layer wireframe" id="svg-wire">
+        <line x1="400" y1="110" x2="400" y2="650" stroke-dasharray="5 10" stroke-width="1" />
+        <line x1="250" y1="200" x2="250" y2="412" />
+        <line x1="350" y1="145" x2="350" y2="357" />
+        <line x1="550" y1="200" x2="550" y2="412" />
+        <line x1="450" y1="145" x2="450" y2="357" />
+        <path d="M150 250 L400 110 L650 250 L400 390 Z" />
+        <path d="M200 440 L400 330 L600 440 L400 550 Z" />
+        <circle class="ui-node" cx="400" cy="110" r="6" />
+        <circle class="ui-node" cx="150" cy="250" r="6" />
+        <circle class="ui-node" cx="650" cy="250" r="6" />
+      </g>
+
+      <g class="layer render-glow" id="svg-glow">
+        <circle cx="400" cy="250" r="250" />
+        <path d="M150 250 L400 390 L400 650 L150 510 Z" fill="rgba(0, 240, 255, 0.05)" />
+      </g>
+    </svg>
   </div>
-</div>
 
-<div id="viewport">
-  <div id="architecture">
+  <div class="content-layer">
     
-    <div class="plane wall-n" id="wall-n"></div>
-    <div class="plane wall-s" id="wall-s"></div>
-    <div class="plane wall-e" id="wall-e"></div>
-    <div class="plane wall-w" id="wall-w"></div>
-
-    <div class="plane roof" id="layer-roof">
-      <div class="grid-bg"></div>
-      <div class="ui-data visible" id="ui-0">
-        <div class="ui-subtitle">Phase 01 // The Vision</div>
-        <div class="ui-title">UNFOLDING<br>SPACE.</div>
-        <div class="ui-desc">Where raw ideas transform into built reality. India's premier academy for next-gen architects.</div>
+    <section class="scroll-section" id="sec-1">
+      <div class="text-block">
+        <div class="phase-tag">Phase 01 // Origin</div>
+        <h2 class="block-title">The<br>Blueprint.</h2>
+        <p class="block-desc">Everything begins with a line. Master spatial awareness, perspective drawing, and the core aptitude required to crack NATA and JEE B.Arch.</p>
+        <div class="tech-pills">
+          <span class="pill">Perspective Studio</span>
+          <span class="pill">Aptitude Logic</span>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="plane floor-2" id="layer-f2">
-      <div class="grid-bg"></div>
-      <div class="ui-data" id="ui-1">
-        <div class="ui-subtitle">Phase 02 // Digital Core</div>
-        <div class="ui-title">THE<br>SOFTWARE<br>STACK.</div>
-        <div class="ui-desc">Master industry workflows. From precise drafting to Building Information Modeling.</div>
-        <div class="ui-tags"><span class="ui-tag">AutoCAD</span><span class="ui-tag">Revit BIM</span></div>
+    <section class="scroll-section" id="sec-2">
+      <div class="text-block">
+        <div class="phase-tag">Phase 02 // Execution</div>
+        <h2 class="block-title">Building<br>Mass.</h2>
+        <p class="block-desc">Transition from paper to pixels. Construct precise 2D floor plans and elevate them into intelligent, parametric 3D BIM models.</p>
+        <div class="tech-pills">
+          <span class="pill">AutoCAD 2D</span>
+          <span class="pill">Revit Architecture</span>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="plane floor-1" id="layer-f1">
-      <div class="grid-bg"></div>
-      <div class="ui-data" id="ui-2">
-        <div class="ui-subtitle">Phase 03 // Visualization</div>
-        <div class="ui-title">HYPER<br>REALISM.</div>
-        <div class="ui-desc">Breathe life into geometry. Cinematic walk-throughs and photorealistic lighting.</div>
-        <div class="ui-tags"><span class="ui-tag">SketchUp</span><span class="ui-tag">Lumion</span><span class="ui-tag">V-Ray</span></div>
+    <section class="scroll-section" id="sec-3">
+      <div class="text-block">
+        <div class="phase-tag">Phase 03 // Visualization</div>
+        <h2 class="block-title">Hyper<br>Realism.</h2>
+        <p class="block-desc">Breathe life into geometry. Manipulate light, shadow, and texture to produce cinematic walk-throughs and photorealistic renders.</p>
+        <div class="tech-pills">
+          <span class="pill">SketchUp Pro</span>
+          <span class="pill">Lumion</span>
+          <span class="pill">V-Ray</span>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="plane foundation" id="layer-base">
-      <div class="grid-bg"></div>
-      <div class="ui-data" id="ui-3">
-        <div class="ui-subtitle">Phase 04 // The Foundation</div>
-        <div class="ui-title">NATA & JEE<br>ENTRANCE.</div>
-        <div class="ui-desc">The origin point. Spatial awareness, perspective drawing, and core architectural aptitude.</div>
-        <div class="ui-tags"><span class="ui-tag">Aptitude</span><span class="ui-tag">Drawing Studio</span></div>
+    <section class="scroll-section" id="sec-4">
+      <div class="text-block">
+        <div class="phase-tag" style="justify-content: center;">System Ready // Enroll 2025</div>
+        <h2 class="block-title" style="margin-bottom: 0.5rem;">Secure Your Seat.</h2>
+        <p class="block-desc" style="max-width: 500px; margin: 0 auto;">Taught by practicing architects at Ray Design & Build. Stop studying theory. Start building your portfolio.</p>
+        
+        <form onsubmit="event.preventDefault(); this.querySelector('.submit-btn').innerText='Application Secured ✓'; this.querySelector('.submit-btn').style.background='#fff'; this.querySelector('.submit-btn').style.color='#000';">
+          <div class="contact-grid">
+            <input type="text" class="neo-input" placeholder="First Name" required>
+            <input type="text" class="neo-input" placeholder="Last Name">
+          </div>
+          <div class="contact-grid full" style="margin-top: 1.5rem;">
+            <input type="tel" class="neo-input" placeholder="Phone Number (+91)" required>
+            <select class="neo-input" required>
+              <option value="" disabled selected>Select Primary Track...</option>
+              <option>NATA / JEE (Entrance Prep)</option>
+              <option>AutoCAD / 2D Drafting</option>
+              <option>Revit (BIM Integration)</option>
+              <option>Lumion / V-Ray (Rendering)</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Initialize Enrollment</button>
+        </form>
       </div>
-    </div>
+    </section>
 
   </div>
 </div>
 
-<div id="contact-overlay">
-  <div class="contact-card">
-    <div class="cc-title">Initialize Future.</div>
-    <div class="cc-sub">Secure your seat for the 2025 intake. Taught by practicing architects at Ray Design & Build, Chennai.</div>
-    
-    <div class="form-group"><input type="text" placeholder="Full Name"></div>
-    <div class="form-group"><input type="tel" placeholder="Phone Number (+91 91764 63826)"></div>
-    <div class="form-group">
-      <select>
-        <option value="" disabled selected>Select Primary Module...</option>
-        <option>NATA / JEE Prep</option>
-        <option>Software: AutoCAD / Revit</option>
-        <option>Software: SketchUp / Lumion</option>
-      </select>
-    </div>
-    <button class="submit-btn" onclick="this.innerText='Application Received //'">Confirm Enrollment</button>
+<footer>
+  <div class="f-details">
+    <strong>Ray Arch Academy</strong><br>
+    A Ray Design & Build Initiative<br>
+    Chennai, Tamil Nadu, India
   </div>
-</div>
+  <div class="f-details" style="text-align: right;">
+    <strong>Direct Comm Line</strong><br>
+    +91 91764 63826<br>
+    hello@rayarchacademy.in
+  </div>
+</footer>
 
 <script>
-// Elements
-const arch = document.getElementById('architecture');
-const roof = document.getElementById('layer-roof');
-const f2 = document.getElementById('layer-f2');
-const f1 = document.getElementById('layer-f1');
-const base = document.getElementById('layer-base');
-const walls = [document.getElementById('wall-n'), document.getElementById('wall-s'), document.getElementById('wall-e'), document.getElementById('wall-w')];
-const infoPanel = document.getElementById('info-panel');
-const contactOverlay = document.getElementById('contact-overlay');
-const hint = document.getElementById('scroll-hint');
+// --- CUSTOM CURSOR LOGIC ---
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+let ringX = mouseX, ringY = mouseY;
 
-// UI Data elements
-const uis = [
-  document.getElementById('ui-0'),
-  document.getElementById('ui-1'),
-  document.getElementById('ui-2'),
-  document.getElementById('ui-3')
-];
-const dots = [
-  document.getElementById('dot-0'),
-  document.getElementById('dot-1'),
-  document.getElementById('dot-2'),
-  document.getElementById('dot-3'),
-  document.getElementById('dot-4')
-];
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  dot.style.left = mouseX + 'px';
+  dot.style.top = mouseY + 'px';
+});
 
-// Scroll Logic
-window.addEventListener('scroll', () => {
-  // Calculate scroll progress from 0 to 1
+function animateCursor() {
+  ringX += (mouseX - ringX) * 0.15;
+  ringY += (mouseY - ringY) * 0.15;
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Hover interactions
+document.querySelectorAll('a, button, input, select').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '60px'; ring.style.height = '60px';
+    ring.style.background = 'rgba(0, 240, 255, 0.05)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '40px'; ring.style.height = '40px';
+    ring.style.background = 'transparent';
+  });
+});
+
+// --- SCROLL ENGINE LOGIC ---
+const nav = document.getElementById('mainNav');
+const prompt = document.getElementById('scroll-prompt');
+const textBlocks = document.querySelectorAll('.text-block');
+
+// SVG Elements
+const svgEngine = document.querySelector('.arch-engine');
+const svgWire = document.getElementById('svg-wire');
+const svgSolid = document.getElementById('svg-solid');
+const svgGlow = document.getElementById('svg-glow');
+const uiNodes = document.querySelectorAll('.ui-node');
+
+function updateScroll() {
+  // Calculate total scroll progress (0 to 1)
   const scrollTop = window.scrollY;
-  const maxScroll = document.body.scrollHeight - window.innerHeight;
-  let progress = scrollTop / maxScroll;
-  
-  if(progress > 0.05) { hint.style.opacity = '0'; } else { hint.style.opacity = '1'; }
-  if(progress > 0.1 && progress < 0.9) { infoPanel.classList.add('visible'); } else { infoPanel.classList.remove('visible'); }
-  
-  // 1. ROTATION EFFECT: The building rotates as you scroll
-  // Starts at 60deg X, 45deg Z. Ends at a top-down architectural plan view (0deg X, 0deg Z)
-  const currentRotX = 60 - (progress * 60); // Goes to 0
-  const currentRotZ = 45 - (progress * 45); // Goes to 0
-  arch.style.transform = `rotateX(${currentRotX}deg) rotateZ(${currentRotZ}deg)`;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  let progress = Math.max(0, Math.min(1, scrollTop / maxScroll));
 
-  // Keep UI text facing the camera by reversing the parent rotation
-  uis.forEach(ui => {
-    ui.style.transform = `rotateZ(${-currentRotZ}deg) rotateX(${-currentRotX}deg)`;
+  // Nav & Prompt visibility
+  if (scrollTop > 50) {
+    nav.classList.add('scrolled');
+    prompt.style.opacity = '0';
+  } else {
+    nav.classList.remove('scrolled');
+    prompt.style.opacity = '1';
+  }
+
+  // --- 1. ACTIVATE TEXT BLOCKS ---
+  // Divide the scroll into 4 segments (0-0.25, 0.25-0.5, 0.5-0.75, 0.75-1)
+  textBlocks.forEach((block, index) => {
+    const triggerStart = (index * 0.25) - 0.1;
+    const triggerEnd = ((index + 1) * 0.25) + 0.1;
+    
+    if (progress > triggerStart && progress < triggerEnd) {
+      block.classList.add('active');
+    } else {
+      block.classList.remove('active');
+    }
   });
 
-  // 2. WALLS OPACITY: Walls fade out quickly to reveal the inside
-  const wallOpacity = Math.max(0, 1 - (progress * 5));
-  walls.forEach(w => w.style.opacity = wallOpacity);
-
-  // 3. EXPLODED AXONOMETRIC (SECTIONAL CUT): Layers pull apart
-  // Based on progress, adjust the translateZ of each layer
+  // --- 2. MORPH THE SVG ARCHITECTURE ---
+  // STAGE 1: Drawing the Wireframe (0 to 0.25)
+  if (progress < 0.3) {
+    // Map progress 0-0.25 to dashoffset 2000-0
+    let drawProgress = Math.min(1, progress / 0.25);
+    svgWire.style.strokeDashoffset = 2000 - (2000 * drawProgress);
+    svgSolid.style.opacity = '0';
+    svgGlow.style.opacity = '0';
+    svgEngine.style.transform = 'translate(-50%, -50%) scale(1)';
+    uiNodes.forEach(n => n.style.opacity = drawProgress > 0.8 ? '1' : '0');
+  }
   
-  // Base distances
-  let rZ = 150, f2Z = 50, f1Z = -50, bZ = -150;
+  // STAGE 2: Solid Massing (Revit/BIM) (0.3 to 0.6)
+  else if (progress >= 0.3 && progress < 0.6) {
+    let massProgress = Math.min(1, (progress - 0.3) / 0.2);
+    svgWire.style.strokeDashoffset = '0';
+    svgSolid.style.opacity = massProgress.toString();
+    svgGlow.style.opacity = '0';
+    // Shift the graphic to the right slightly to balance the left text block
+    svgEngine.style.transform = 'translate(-30%, -50%) scale(1.1)';
+  }
   
-  // As progress increases, the gap between layers increases drastically
-  const spread = progress * 1000; 
-  roof.style.transform = `translateZ(${rZ + spread}px)`;
-  f2.style.transform = `translateZ(${f2Z + (spread * 0.5)}px)`;
-  f1.style.transform = `translateZ(${f1Z - (spread * 0.5)}px)`;
-  base.style.transform = `translateZ(${bZ - spread}px)`;
-
-  // 4. ACTIVE LAYER OPACITY & DOTS: Which layer we are focusing on
-  // 0.0 - 0.2: Roof
-  // 0.2 - 0.4: F2
-  // 0.4 - 0.6: F1
-  // 0.6 - 0.8: Base
-  // 0.8 - 1.0: Contact Form
+  // STAGE 3: Render Glow (Lumion/VRay) (0.6 to 0.85)
+  else if (progress >= 0.6 && progress < 0.85) {
+    let glowProgress = Math.min(1, (progress - 0.6) / 0.2);
+    svgSolid.style.opacity = '1';
+    svgGlow.style.opacity = glowProgress.toString();
+    // Shift back to center-left
+    svgEngine.style.transform = 'translate(-60%, -50%) scale(1.2)';
+  }
   
-  uis.forEach(ui => ui.classList.remove('visible'));
-  dots.forEach(d => d.classList.remove('active'));
-  contactOverlay.classList.remove('visible');
+  // STAGE 4: Final Frame (Fades back slightly for the form)
+  else {
+    svgEngine.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    svgGlow.style.opacity = '0.3';
+    svgWire.style.strokeDashoffset = '0';
+  }
+}
 
-  if (progress < 0.2) {
-    uis[0].classList.add('visible'); dots[0].classList.add('active');
-    roof.style.opacity = '1'; f2.style.opacity = '0.3'; f1.style.opacity = '0.1'; base.style.opacity = '0.1';
-  } else if (progress < 0.45) {
-    uis[1].classList.add('visible'); dots[1].classList.add('active');
-    roof.style.opacity = '0.1'; f2.style.opacity = '1'; f1.style.opacity = '0.3'; base.style.opacity = '0.1';
-  } else if (progress < 0.7) {
-    uis[2].classList.add('visible'); dots[2].classList.add('active');
-    roof.style.opacity = '0.1'; f2.style.opacity = '0.1'; f1.style.opacity = '1'; base.style.opacity = '0.3';
-  } else if (progress < 0.9) {
-    uis[3].classList.add('visible'); dots[3].classList.add('active');
-    roof.style.opacity = '0.1'; f2.style.opacity = '0.1'; f1.style.opacity = '0.1'; base.style.opacity = '1';
-  } else {
-    dots[4].classList.add('active');
-    contactOverlay.classList.add('visible');
-    // Blur the building in the background
-    roof.style.opacity = '0'; f2.style.opacity = '0'; f1.style.opacity = '0'; base.style.opacity = '0';
+// Use RequestAnimationFrame for butter-smooth updates instead of raw onscroll
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      updateScroll();
+      ticking = false;
+    });
+    ticking = true;
   }
 });
+
+// Initial trigger
+updateScroll();
 
 function scrollToEnd() {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
