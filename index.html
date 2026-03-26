@@ -1,299 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ray Arch Academy | Unfolding Space</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<style>
-:root {
-  --bg: #050608;
-  --text: #F4F4F5;
-  --text-muted: #8A8D93;
-  --accent: #00E5FF; /* Cyan Blueprint Glow */
-  --accent-glow: rgba(0, 229, 255, 0.3);
-  
-  /* 3D Model Colors */
-  --slab-top: rgba(255, 255, 255, 0.08);
-  --slab-side: rgba(255, 255, 255, 0.03);
-  --glass: rgba(0, 229, 255, 0.05);
-  --wireframe: rgba(0, 229, 255, 0.5);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-  background: var(--bg); 
-  color: var(--text); 
-  font-family: 'Outfit', sans-serif; 
-  overflow-x: hidden; 
-  -webkit-font-smoothing: antialiased;
-  cursor: none;
-}
-
-/* CUSTOM CURSOR */
-#cursor { position: fixed; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s; box-shadow: 0 0 10px var(--accent); }
-#cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid var(--accent-glow); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
-
-/* NAVIGATION */
-nav { position: fixed; top: 0; width: 100%; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; mix-blend-mode: difference; }
-.logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
-.enroll-btn { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.2); padding: 0.8rem 2rem; font-family: 'Outfit'; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 50px; cursor: none; transition: 0.3s; backdrop-filter: blur(10px); }
-.enroll-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); background: rgba(0, 229, 255, 0.05); }
-
-/* --- THE SCROLL NARRATIVE CONTAINER --- */
-/* We make this very tall to create a long scrolling timeline */
-#scroll-container { height: 500vh; position: relative; }
-
-/* --- THE 3D SCENE (Sticky) --- */
-/* This stays pinned to the screen while you scroll */
-#scene-wrapper { position: sticky; top: 0; width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 2000px; }
-
-/* Ambient Background Grid */
-.bg-grid { position: absolute; inset: -50%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 60px 60px; transform: rotateX(60deg) rotateZ(45deg); z-index: -1; pointer-events: none; }
-
-/* The 3D Master Container */
-#architecture { 
-  position: relative; width: 400px; height: 400px; 
-  transform-style: preserve-3d; 
-  /* Initial Isometric State */
-  transform: rotateX(60deg) rotateZ(45deg) translateZ(-100px); 
-}
-
-/* 3D BUILDING COMPONENTS */
-.layer { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; }
-
-/* 1. Base / Plinth */
-.plinth { transform: translateZ(0px); }
-.plinth .face-top { position: absolute; width: 400px; height: 400px; background: var(--slab-top); border: 1px solid var(--wireframe); }
-
-/* 2. Ground Floor Core & Glass */
-.gf { transform: translateZ(20px); }
-.core { position: absolute; top: 100px; left: 100px; width: 200px; height: 200px; background: var(--slab-side); transform: translateZ(50px); border: 1px solid rgba(255,255,255,0.1); }
-.glass-wall-front { position: absolute; top: 380px; left: 20px; width: 360px; height: 120px; background: var(--glass); border: 1px solid var(--wireframe); transform-origin: top; transform: rotateX(-90deg) translateY(-120px); backdrop-filter: blur(2px); }
-.glass-wall-right { position: absolute; top: 20px; left: 380px; width: 360px; height: 120px; background: var(--glass); border: 1px solid var(--wireframe); transform-origin: left; transform: rotateY(90deg); backdrop-filter: blur(2px); }
-
-/* 3. First Floor Cantilever */
-.ff { transform: translateZ(140px); }
-.ff-slab { position: absolute; top: -20px; left: 50px; width: 350px; height: 350px; background: var(--slab-top); border: 1px solid var(--wireframe); box-shadow: inset 0 0 50px rgba(255,255,255,0.02); }
-
-/* 4. Roof & Upper Structure (This lifts off during the cut) */
-.roof-layer { transform: translateZ(160px); }
-.roof-core { position: absolute; top: 50px; left: 100px; width: 200px; height: 150px; background: var(--slab-side); border: 1px solid rgba(255,255,255,0.1); transform: translateZ(50px); }
-.roof-slab { position: absolute; top: 0px; left: 50px; width: 350px; height: 350px; background: rgba(5,6,8,0.9); border: 2px solid var(--accent); transform: translateZ(100px); box-shadow: 0 0 30px var(--accent-glow); }
-
-/* --- UI TEXT PANELS (Scroll Sync) --- */
-.ui-panel { position: absolute; top: 50%; left: 10%; transform: translateY(-50%); width: 400px; z-index: 100; pointer-events: none; }
-.step-text { position: absolute; top: 0; left: 0; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.step-text.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
-.phase { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; }
-.phase::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
-.title { font-size: 3.5rem; font-weight: 300; line-height: 1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
-.title strong { font-weight: 700; }
-.desc { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
-
-/* --- FINAL CONTACT FORM --- */
-#contact-section { position: absolute; right: 10%; top: 50%; transform: translateY(-50%); width: 450px; opacity: 0; pointer-events: none; z-index: 200; }
-.c-box { background: rgba(10, 12, 15, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 12px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-.c-box h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-.c-box p { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2rem; }
-.input-group { margin-bottom: 1.5rem; }
-.form-control { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); color: var(--text); padding: 1rem 0; font-family: 'Outfit'; font-size: 1rem; outline: none; transition: 0.3s; }
-.form-control:focus { border-bottom-color: var(--accent); }
-.submit-btn { background: var(--text); color: var(--bg); border: none; padding: 1.2rem; width: 100%; font-family: 'Outfit'; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; margin-top: 1rem; cursor: none; transition: 0.3s; }
-.submit-btn:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-
-/* Scroll Indicator */
-.scroll-indicator { position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); z-index: 100; opacity: 1; transition: 0.5s; }
-.mouse { width: 24px; height: 36px; border: 1px solid var(--text-muted); border-radius: 20px; position: relative; }
-.wheel { width: 4px; height: 8px; background: var(--accent); border-radius: 4px; margin: 6px auto 0; animation: scroll 2s infinite; box-shadow: 0 0 10px var(--accent); }
-@keyframes scroll { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
-
-@media(max-width: 900px) {
-  nav { padding: 1.5rem 2rem; } .enroll-btn { display: none; }
-  .ui-panel { left: 5%; width: 90%; top: 20%; transform: none; }
-  .title { font-size: 2.5rem; }
-  #architecture { transform: scale(0.6) rotateX(60deg) rotateZ(45deg) translateZ(-100px) !important; margin-top: 20vh; }
-  #contact-section { right: 5%; width: 90%; top: 55%; transform: translateY(-50%); }
-  .c-box { padding: 2rem; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ray Arch Academy prepares future architects and designers for NATA, JEE B.Arch, NIFT, NID, BDes and portfolio admissions through architect-led studio training.">
+  <title>Ray Arch Academy | Architect-Led Entrance Coaching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add("js-enabled");</script>
 </head>
 <body>
+  <div class="site-shell"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#hero" aria-label="Ray Arch Academy home">
+      <span class="brand-mark">R</span>
+      <span class="brand-text">
+        <strong>Ray Arch Academy</strong>
+        <small>Architect-led coaching for creative entrances</small>
+      </span>
+    </a>
 
-<nav>
-  <div class="logo">RAY ARCH.</div>
-  <button class="enroll-btn hover-target" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">Apply 2025</button>
-</nav>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open navigation">
+      <span></span>
+      <span></span>
+    </button>
 
-<div class="scroll-indicator" id="scroll-hint">
-  <span>Scroll to Unfold</span>
-  <div class="mouse"><div class="wheel"></div></div>
-</div>
+    <nav class="nav" id="siteNav" aria-label="Primary navigation">
+      <a href="#programs">Programs</a>
+      <a href="#journey">Method</a>
+      <a href="#results">Results</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-cta" href="#contact">Book a Counselling Call</a>
+    </nav>
+  </header>
 
-<div id="scroll-container">
-  
-  <div id="scene-wrapper">
-    <div class="bg-grid"></div>
-
-    <div class="ui-panel">
-      <div class="step-text active" id="text-1">
-        <div class="phase">Phase 01 // The Origin</div>
-        <h1 class="title">Where Space<br><strong>Begins.</strong></h1>
-        <p class="desc">A monolithic structure representing the foundation of architecture. We prepare students to conquer NATA and JEE B.Arch with elite spatial awareness.</p>
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-copy">
+        <p class="eyebrow reveal">Architecture and design entrance coaching</p>
+        <h1 class="hero-title reveal reveal-delay-1">
+          Where raw
+          <span>imagination</span>
+          learns structure.
+        </h1>
+        <p class="hero-text reveal reveal-delay-2">
+          Ray Arch Academy helps students crack NATA, JEE B.Arch, NIFT, NID and BDes admissions through architect-led studio sessions, drawing critique, aptitude prep and portfolio mentoring.
+        </p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a class="button button-primary" href="#contact">Apply for Guidance</a>
+          <a class="button button-secondary" href="#programs">Explore Programs</a>
+        </div>
+        <ul class="hero-points reveal reveal-delay-4" aria-label="Highlights">
+          <li>1200+ students trained</li>
+          <li>94% reported selection rate</li>
+          <li>Practicing architect mentors</li>
+        </ul>
       </div>
-      <div class="step-text" id="text-2">
-        <div class="phase">Phase 02 // Sectional Cut</div>
-        <h1 class="title">Revealing the<br><strong>Core.</strong></h1>
-        <p class="desc">We dissect design. Transition from entrance exams into professional studio workflows. Master AutoCAD drafting and structural detailing.</p>
-      </div>
-      <div class="step-text" id="text-3">
-        <div class="phase">Phase 03 // BIM Integration</div>
-        <h1 class="title">Parametric<br><strong>Reality.</strong></h1>
-        <p class="desc">The perspective shifts. Enter the world of Building Information Modeling (Revit). Design intelligently, not just visually.</p>
-      </div>
-      <div class="step-text" id="text-4">
-        <div class="phase">Phase 04 // Visualization</div>
-        <h1 class="title">Hyper<br><strong>Rendering.</strong></h1>
-        <p class="desc">Breathe life into geometry. Master Lumion and V-Ray to produce cinematic, photorealistic walk-throughs that win clients.</p>
-      </div>
-    </div>
 
-    <div id="contact-section">
-      <div class="c-box">
-        <h3>Secure Your Seat.</h3>
-        <p>Ray Design & Build Studio // 2025</p>
-        <form onsubmit="event.preventDefault(); this.querySelector('.submit-btn').innerText='Application Secured ✓'; this.querySelector('.submit-btn').style.background='#fff'; this.querySelector('.submit-btn').style.color='#000';">
-          <div class="input-group"><input type="text" class="form-control hover-target" placeholder="Full Name" required></div>
-          <div class="input-group"><input type="tel" class="form-control hover-target" placeholder="Phone Number (+91)" required></div>
-          <div class="input-group">
-            <select class="form-control hover-target" required>
-              <option value="" disabled selected>Select Program...</option>
-              <option>NATA / JEE Prep</option>
-              <option>AutoCAD / Revit (BIM)</option>
-              <option>SketchUp / Lumion (Render)</option>
-            </select>
+      <div class="hero-visual reveal reveal-delay-2">
+        <div class="hero-frame">
+          <div class="grid-plane"></div>
+          <div class="model-stage" id="modelStage">
+            <div class="stage-ring stage-ring-one"></div>
+            <div class="stage-ring stage-ring-two"></div>
+            <div class="mass mass-base"></div>
+            <div class="mass mass-core"></div>
+            <div class="mass mass-cantilever"></div>
+            <div class="mass mass-lift"></div>
+            <div class="axis axis-x">vision</div>
+            <div class="axis axis-y">discipline</div>
+            <div class="axis axis-z">execution</div>
           </div>
-          <button type="submit" class="submit-btn hover-target">Initialize Enrollment</button>
-        </form>
+          <div class="hero-caption">
+            <div>
+              <span>Studio Logic</span>
+              <strong>Observe - Draw - Critique - Perform</strong>
+            </div>
+            <p>Built from your concept: a cinematic architectural identity, made practical for real admissions and enquiries.</p>
+          </div>
+        </div>
       </div>
+    </section>
+
+    <section class="metrics">
+      <article class="metric reveal">
+        <strong data-count="1200">1200+</strong>
+        <span>Students trained across architecture and design entrances</span>
+      </article>
+      <article class="metric reveal reveal-delay-1">
+        <strong data-count="94">94%</strong>
+        <span>Selection rate claimed in the existing academy draft</span>
+      </article>
+      <article class="metric reveal reveal-delay-2">
+        <strong data-count="8">8+</strong>
+        <span>Years shaping entrance preparation with studio discipline</span>
+      </article>
+      <article class="metric reveal reveal-delay-3">
+        <strong data-count="45">45+</strong>
+        <span>Colleges reached through student selections and admissions</span>
+      </article>
+    </section>
+
+    <section class="programs section" id="programs">
+      <div class="section-head">
+        <p class="eyebrow reveal">Program Atlas</p>
+        <h2 class="section-title reveal reveal-delay-1">Every path mapped from exam pressure to creative confidence.</h2>
+        <p class="section-text reveal reveal-delay-2">
+          The academy draft already had strong program depth. Here it is reorganized into a cleaner high-conversion structure that feels premium and easy to browse.
+        </p>
+      </div>
+
+      <div class="program-grid">
+        <article class="program-card reveal">
+          <div class="program-number">01</div>
+          <h3>NATA Studio</h3>
+          <p>Drawing, visual composition, observation, architecture awareness, timed mocks and performance review.</p>
+          <ul>
+            <li>Freehand drawing practice</li>
+            <li>Aesthetic sensitivity and composition</li>
+            <li>Mock tests with critique</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-1">
+          <div class="program-number">02</div>
+          <h3>JEE B.Arch</h3>
+          <p>Focused support for aptitude, mathematics, spatial reasoning and pressure-tested exam strategy.</p>
+          <ul>
+            <li>Paper 2 readiness</li>
+            <li>3D visualization thinking</li>
+            <li>Problem-solving drills</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-2">
+          <div class="program-number">03</div>
+          <h3>NIFT / NID / BDes</h3>
+          <p>Creative entrance coaching for design schools with portfolio-building, concept development and interview readiness.</p>
+          <ul>
+            <li>Design aptitude development</li>
+            <li>Creative ability and ideation</li>
+            <li>Portfolio guidance</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-3">
+          <div class="program-number">04</div>
+          <h3>Crash and Repeaters Batch</h3>
+          <p>Short, intense preparation cycles for students who need structure, speed and close tracking.</p>
+          <ul>
+            <li>60-day intensive rhythm</li>
+            <li>Daily targets and reviews</li>
+            <li>One-to-one correction loops</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal">
+          <div class="program-number">05</div>
+          <h3>Portfolio Mentorship</h3>
+          <p>For students applying beyond exams: curated portfolio stories, presentation language and admissions support.</p>
+          <ul>
+            <li>Project selection and editing</li>
+            <li>Layout and storytelling guidance</li>
+            <li>Interview preparation</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-1">
+          <div class="program-number">06</div>
+          <h3>Software Foundation</h3>
+          <p>Borrowed from your concept: extend from entrance prep into digital practice with drafting, BIM and visualization tools.</p>
+          <ul>
+            <li>AutoCAD and drafting basics</li>
+            <li>Revit and BIM thinking</li>
+            <li>SketchUp, Lumion and render workflows</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="journey section" id="journey">
+      <div class="journey-intro">
+        <p class="eyebrow reveal">Studio Method</p>
+        <h2 class="section-title reveal reveal-delay-1">A training process that feels like architecture, not coaching-factory routine.</h2>
+      </div>
+
+      <div class="journey-grid">
+        <article class="journey-step reveal">
+          <span>Phase 01</span>
+          <h3>Observe the world like a designer</h3>
+          <p>Students learn to see proportion, light, form and spatial relationships before chasing marks.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-1">
+          <span>Phase 02</span>
+          <h3>Draw with speed and clarity</h3>
+          <p>Weekly sketch drills and corrections transform hesitation into reliable exam performance.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-2">
+          <span>Phase 03</span>
+          <h3>Think through aptitude and logic</h3>
+          <p>Math, reasoning and exam pattern training are taught with structure, not panic.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-3">
+          <span>Phase 04</span>
+          <h3>Present work like a future professional</h3>
+          <p>Portfolio, software and presentation guidance help students cross from exam prep into actual design culture.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="why section">
+      <div class="why-panel reveal">
+        <p class="eyebrow">Why families choose Ray Arch Academy</p>
+        <h2 class="section-title">Mentorship with design sensibility, not generic tuition energy.</h2>
+      </div>
+
+      <div class="feature-list">
+        <article class="feature-card reveal">
+          <h3>Practicing architect faculty</h3>
+          <p>The strongest point in your existing draft stays central here: students learn from professionals who work inside architecture and design.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-1">
+          <h3>Small batches and personal review</h3>
+          <p>Feedback loops matter in creative entrances. Smaller groups mean individual correction instead of passive attendance.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-2">
+          <h3>Exam pattern plus studio discipline</h3>
+          <p>Students get both marks-driven strategy and real visual training, which is what makes results feel durable.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-3">
+          <h3>Beyond entrance coaching</h3>
+          <p>The site also introduces your broader academy ambition: software, portfolio and visualization training for the next stage.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="results section" id="results">
+      <div class="section-head">
+        <p class="eyebrow reveal">Selected Outcomes</p>
+        <h2 class="section-title reveal reveal-delay-1">Recent names, ranks and destinations presented with more polish.</h2>
+      </div>
+
+      <div class="results-strip">
+        <article class="result-card reveal">
+          <span>NATA 2024</span>
+          <h3>Aarav Mehta</h3>
+          <strong>172 / 200</strong>
+          <p>SPA New Delhi</p>
+        </article>
+        <article class="result-card reveal reveal-delay-1">
+          <span>JEE B.Arch 2024</span>
+          <h3>Rahul Sharma</h3>
+          <strong>98.4 percentile</strong>
+          <p>NIT Trichy</p>
+        </article>
+        <article class="result-card reveal reveal-delay-2">
+          <span>NID DAT 2024</span>
+          <h3>Sneha Iyer</h3>
+          <strong>Selected</strong>
+          <p>NID Ahmedabad</p>
+        </article>
+        <article class="result-card reveal reveal-delay-3">
+          <span>NIFT 2024</span>
+          <h3>Priya Nair</h3>
+          <strong>Selected</strong>
+          <p>NIFT Mumbai</p>
+        </article>
+      </div>
+
+      <div class="testimonial-grid">
+        <blockquote class="testimonial reveal">
+          <p>"They did not just train me to crack NATA. They trained me to think like an architect and trust my own drawing process."</p>
+          <footer>Aarav Mehta, NATA 2024</footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-1">
+          <p>"Small batches meant every class came with feedback. That one change improved both my confidence and my score."</p>
+          <footer>Rahul Sharma, JEE B.Arch 2024</footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-2">
+          <p>"The portfolio guidance felt serious and professional. It was not random decoration, it was actual design thinking."</p>
+          <footer>Sneha Iyer, NID DAT 2024</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="studio section" id="studio">
+      <div class="section-head">
+        <p class="eyebrow reveal">Studio Atmosphere</p>
+        <h2 class="section-title reveal reveal-delay-1">A visual language that feels premium even without photography.</h2>
+      </div>
+
+      <div class="studio-grid">
+        <article class="studio-tile studio-tile-large reveal">
+          <div class="tile-art tile-art-lines"></div>
+          <div class="tile-copy">
+            <span>Drawing Lab</span>
+            <h3>Perspective, memory sketching and timed composition practice</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-1">
+          <div class="tile-art tile-art-orbit"></div>
+          <div class="tile-copy">
+            <span>Crit Room</span>
+            <h3>Weekly design critique and personal feedback</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-2">
+          <div class="tile-art tile-art-grid"></div>
+          <div class="tile-copy">
+            <span>Mock Zone</span>
+            <h3>Pressure-tested exams that simulate real timing</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-3">
+          <div class="tile-art tile-art-glow"></div>
+          <div class="tile-copy">
+            <span>Digital Desk</span>
+            <h3>AutoCAD, Revit, SketchUp and render basics</h3>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="faq section">
+      <div class="section-head">
+        <p class="eyebrow reveal">Common Questions</p>
+        <h2 class="section-title reveal reveal-delay-1">Information parents and students usually want first.</h2>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Who is this academy best suited for?</summary>
+          <p>Students preparing for architecture or design entrances, especially those targeting NATA, JEE B.Arch, NIFT, NID or portfolio-based admissions.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-1">
+          <summary>Do you only coach for exams?</summary>
+          <p>No. The site now reflects your broader concept too: entrance preparation, portfolio support and software foundation for students moving into design school.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-2">
+          <summary>How are batches managed?</summary>
+          <p>The existing draft emphasized small batches and personal attention, so the site positions that as a core promise across regular, crash and guidance formats.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-3">
+          <summary>How should a new student start?</summary>
+          <p>Start with a counselling conversation so the academy can recommend the right track based on class level, target exam and current portfolio or drawing ability.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="contact section" id="contact">
+      <div class="contact-panel reveal">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="section-title">Build the right path before the exams begin.</h2>
+        <p class="section-text">
+          Based on the details in your existing draft, the contact block below keeps the phone and email ready for real use while the enquiry form gives the page a strong conversion endpoint.
+        </p>
+
+        <div class="contact-meta">
+          <a href="tel:+919876543210">
+            <span>Phone</span>
+            <strong>+91 98765 43210</strong>
+          </a>
+          <a href="mailto:hello@rayarchacademy.in">
+            <span>Email</span>
+            <strong>hello@rayarchacademy.in</strong>
+          </a>
+          <div>
+            <span>Studio</span>
+            <strong>Ray Design and Build Studio, India</strong>
+          </div>
+          <div>
+            <span>Formats</span>
+            <strong>Regular batch / Crash batch / Online guidance</strong>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-1" id="contactForm">
+        <div class="form-row">
+          <label>
+            <span>Student name</span>
+            <input type="text" name="studentName" placeholder="Aarav Mehta" required>
+          </label>
+          <label>
+            <span>Phone number</span>
+            <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            <span>Email address</span>
+            <input type="email" name="email" placeholder="student@email.com">
+          </label>
+          <label>
+            <span>Program of interest</span>
+            <select name="program" required>
+              <option value="">Select a program</option>
+              <option>NATA Studio</option>
+              <option>JEE B.Arch</option>
+              <option>NIFT / NID / BDes</option>
+              <option>Crash and Repeaters Batch</option>
+              <option>Portfolio Mentorship</option>
+              <option>Software Foundation</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>Current class or level</span>
+          <select name="level" required>
+            <option value="">Select level</option>
+            <option>Class 10</option>
+            <option>Class 11</option>
+            <option>Class 12</option>
+            <option>Dropper</option>
+            <option>College student</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Goals</span>
+          <textarea name="message" placeholder="Tell us which exam or college you are targeting."></textarea>
+        </label>
+
+        <button type="submit" class="button button-primary form-submit">Send Enquiry</button>
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <a class="brand" href="#hero">
+        <span class="brand-mark">R</span>
+        <span class="brand-text">
+          <strong>Ray Arch Academy</strong>
+          <small>A Ray Design and Build initiative</small>
+        </span>
+      </a>
+      <p>Shaping future architects and designers through disciplined studio coaching, exam clarity and design culture.</p>
     </div>
 
-    <div id="architecture">
-      
-      <div class="layer plinth">
-        <div class="face-top"></div>
-      </div>
-      
-      <div class="layer gf" id="anim-gf">
-        <div class="core"></div>
-        <div class="glass-wall-front" id="anim-glass-1"></div>
-        <div class="glass-wall-right" id="anim-glass-2"></div>
-      </div>
-      
-      <div class="layer ff" id="anim-ff">
-        <div class="ff-slab"></div>
-      </div>
-      
-      <div class="layer roof-layer" id="anim-roof">
-        <div class="roof-core"></div>
-        <div class="roof-slab" id="anim-roof-glow"></div>
-      </div>
-
+    <div class="footer-links">
+      <a href="#programs">Programs</a>
+      <a href="#journey">Method</a>
+      <a href="#results">Results</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact">Contact</a>
     </div>
-  </div>
-</div>
 
-<script>
-// --- CUSTOM CURSOR ---
-const dot = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
-let ringX = mouseX, ringY = mouseY;
+    <p class="footer-note">
+      <span id="year"></span> Ray Arch Academy. Crafted from your concept direction and existing academy details.
+    </p>
+  </footer>
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX; mouseY = e.clientY;
-  dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
-});
-
-function animateCursor() {
-  ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
-  ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
-  requestAnimationFrame(animateCursor);
-}
-animateCursor();
-
-document.querySelectorAll('.hover-target').forEach(el => {
-  el.addEventListener('mouseenter', () => { ring.style.width = '60px'; ring.style.height = '60px'; ring.style.background = 'rgba(0, 229, 255, 0.1)'; });
-  el.addEventListener('mouseleave', () => { ring.style.width = '40px'; ring.style.height = '40px'; ring.style.background = 'transparent'; });
-});
-
-// --- GSAP SCROLL NARRATIVE (THE BEAST) ---
-gsap.registerPlugin(ScrollTrigger);
-
-// Hide scroll hint on scroll
-window.addEventListener('scroll', () => {
-  if(window.scrollY > 100) document.getElementById('scroll-hint').style.opacity = 0;
-  else document.getElementById('scroll-hint').style.opacity = 1;
-});
-
-// Create a master timeline locked to the scroll container
-const tl = gsap.timeline({
-  scrollTrigger: {
-    trigger: "#scroll-container",
-    start: "top top",
-    end: "bottom bottom",
-    scrub: 1 // Smooth scrubbing (takes 1 second to catch up to scroll)
-  }
-});
-
-// --- SCENE 1 to 2: THE SECTIONAL CUT ---
-// Text swap
-tl.to("#text-1", { opacity: 0, y: -30, duration: 1 })
-  .to("#text-2", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
-
-// Architecture transforms
-tl.to("#anim-roof", { z: 400, opacity: 0.2, duration: 2 }, "<") // Roof lifts way up
-  .to("#anim-glass-1", { opacity: 0.1, duration: 2 }, "<")      // Front glass fades to reveal inside
-  .to("#anim-glass-2", { opacity: 0.1, duration: 2 }, "<");
-
-// --- SCENE 2 to 3: PERSPECTIVE SHIFT & ZOOM ---
-tl.to("#text-2", { opacity: 0, y: -30, duration: 1 })
-  .to("#text-3", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
-
-// Rotate from Isometric to a dramatic low angle
-tl.to("#architecture", { 
-  rotateX: 75, 
-  rotateZ: 15, 
-  scale: 1.3, 
-  x: -150, // Move model left to balance text on right? No, text is on left. Move model right.
-  x: 100,
-  duration: 2 
-}, "<")
-.to(".core", { backgroundColor: "rgba(0, 229, 255, 0.1)", borderColor: "#00E5FF", duration: 2 }, "<");
-
-// --- SCENE 3 to 4: HYPER RENDERING & CONTACT FORM ---
-tl.to("#text-3", { opacity: 0, y: -30, duration: 1 })
-  .to("#text-4", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
-
-// Model shifts back, gets extremely glowing, form slides in
-tl.to("#architecture", { 
-  rotateX: 50, 
-  rotateZ: -30, 
-  scale: 1,
-  x: -200, // Move model to the left
-  duration: 2 
-}, "<")
-.to("#anim-roof", { z: 160, opacity: 1, duration: 2 }, "<") // Roof drops back down
-  .to("#anim-roof-glow", { boxShadow: "0 0 100px rgba(0, 229, 255, 0.8)", borderColor: "#fff", duration: 2 }, "<")
-  .to("#contact-section", { opacity: 1, x: -50, pointerEvents: "auto", duration: 2 }, "<");
-
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
