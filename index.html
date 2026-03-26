@@ -60,8 +60,7 @@ nav.scrolled{background:rgba(8,8,8,.92);backdrop-filter:blur(20px);padding:1rem 
 .btn-outline{border:1px solid rgba(242,237,228,.2);color:var(--paper);padding:.85rem 2.2rem;font-family:'Syne',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;transition:all .3s;display:inline-block}
 .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
 .hero-right{position:relative;overflow:hidden;background:var(--ink2);display:flex;align-items:center;justify-content:center}
-.hero-video {width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 0; animation: fadeIn 1.2s .5s forwards;}
-.hero-video-overlay {position: absolute; inset: 0; background: linear-gradient(135deg, rgba(8,8,8,0.4), rgba(200,169,110,0.15)); z-index: 1; pointer-events: none;}
+.geo-svg{width:88%;max-width:500px;opacity:0;animation:fadeIn 1.2s .5s forwards}
 .hero-scroll-cue{position:absolute;bottom:2.5rem;left:3rem;display:flex;align-items:center;gap:.8rem;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);opacity:0;animation:fadeIn 1s 1.4s forwards}
 .scroll-bar{width:40px;height:1px;background:var(--gold);position:relative;overflow:hidden}
 .scroll-bar::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--paper);animation:scrollSlide 2s 1.8s ease-in-out infinite}
@@ -255,6 +254,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
 <div id="cur-ring"></div>
 <a href="#contact" class="float-btn">Apply Now ↗</a>
 
+<!-- NAV -->
 <nav id="mainNav">
   <a href="#" class="nav-logo">Ray <span>Arch</span> Academy</a>
   <ul class="nav-links" id="navLinks">
@@ -268,6 +268,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   <div class="ham" id="ham" onclick="toggleMenu()"><span></span><span></span></div>
 </nav>
 
+<!-- HERO -->
 <section id="hero">
   <div class="hero-left">
     <p class="hero-tag">India's Architecture & Design Academy</p>
@@ -283,16 +284,39 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
     </div>
     <div class="hero-scroll-cue"><div class="scroll-bar"></div><span>Scroll to discover</span></div>
   </div>
-  
   <div class="hero-right">
-    <video class="hero-video" autoplay loop muted playsinline>
-      <source src="https://raw.githubusercontent.com/olimaran08/RAYARCHACADEMY/refs/heads/main/hero.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="hero-video-overlay"></div>
+    <svg class="geo-svg" viewBox="0 0 500 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="250" cy="300" r="220" stroke="rgba(200,169,110,0.12)" stroke-width="1"/>
+      <circle cx="250" cy="300" r="160" stroke="rgba(200,169,110,0.18)" stroke-width="1"/>
+      <polygon points="250,80 450,340 50,340" stroke="rgba(200,169,110,0.25)" stroke-width="1" fill="none"/>
+      <polygon points="250,520 450,260 50,260" stroke="rgba(200,169,110,0.1)" stroke-width="1" fill="none"/>
+      <rect x="185" y="235" width="130" height="130" stroke="rgba(200,169,110,0.35)" stroke-width="1.5" fill="none" transform="rotate(15 250 300)"/>
+      <rect x="200" y="250" width="100" height="100" stroke="rgba(200,169,110,0.5)" stroke-width="1" fill="rgba(200,169,110,0.03)" transform="rotate(15 250 300)"/>
+      <line x1="250" y1="60" x2="250" y2="540" stroke="rgba(200,169,110,0.08)" stroke-width="1"/>
+      <line x1="30" y1="300" x2="470" y2="300" stroke="rgba(200,169,110,0.08)" stroke-width="1"/>
+      <circle cx="250" cy="300" r="6" fill="rgba(200,169,110,0.7)"/>
+      <circle cx="250" cy="80" r="3" fill="rgba(200,169,110,0.5)"/>
+      <circle cx="450" cy="340" r="3" fill="rgba(200,169,110,0.5)"/>
+      <circle cx="50" cy="340" r="3" fill="rgba(200,169,110,0.5)"/>
+      <circle r="5" fill="#C8A96E" opacity="0.9">
+        <animateMotion dur="12s" repeatCount="indefinite"><mpath href="#orbit-path"/></animateMotion>
+      </circle>
+      <path id="orbit-path" d="M 250 80 A 220 220 0 1 1 249.99 80" fill="none"/>
+      <line x1="30" y1="80" x2="30" y2="520" stroke="rgba(200,169,110,0.15)" stroke-width="1" stroke-dasharray="4 6"/>
+      <line x1="30" y1="80" x2="40" y2="80" stroke="rgba(200,169,110,0.3)" stroke-width="1"/>
+      <line x1="30" y1="520" x2="40" y2="520" stroke="rgba(200,169,110,0.3)" stroke-width="1"/>
+      <g stroke="rgba(200,169,110,0.35)" stroke-width="1">
+        <line x1="470" y1="60" x2="470" y2="90"/><line x1="440" y1="60" x2="470" y2="60"/>
+        <line x1="470" y1="540" x2="470" y2="510"/><line x1="440" y1="540" x2="470" y2="540"/>
+        <line x1="30" y1="60" x2="30" y2="90"/><line x1="30" y1="60" x2="60" y2="60"/>
+      </g>
+      <text x="214" y="372" font-family="Georgia,serif" font-size="52" font-weight="900" fill="rgba(200,169,110,0.07)" letter-spacing="-2">RAA</text>
+      <text x="220" y="296" font-family="sans-serif" font-size="8" fill="rgba(200,169,110,0.5)" letter-spacing="2">ORIGIN POINT</text>
+    </svg>
   </div>
 </section>
 
+<!-- TICKER -->
 <div class="ticker">
   <div class="ticker-track">
     <span class="ticker-item">NATA 2025</span><span class="ticker-item">IIT JEE B.Arch</span><span class="ticker-item">NIFT Entrance</span><span class="ticker-item">NID Design Aptitude</span><span class="ticker-item">BDes Programs</span><span class="ticker-item">Portfolio Mentorship</span><span class="ticker-item">Drawing Studio</span><span class="ticker-item">Crash Courses</span>
@@ -300,6 +324,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </div>
 
+<!-- COUNTERS -->
 <div class="counters">
   <div class="ctr rv"><div class="ctr-num"><span class="count" data-t="1200">0</span><sup>+</sup></div><div class="ctr-label">Students<br>Trained</div><div class="ctr-bar"></div></div>
   <div class="ctr rv d1"><div class="ctr-num"><span class="count" data-t="94">0</span><sup>%</sup></div><div class="ctr-label">Selection<br>Rate</div><div class="ctr-bar"></div></div>
@@ -307,6 +332,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   <div class="ctr rv d3"><div class="ctr-num"><span class="count" data-t="45">0</span></div><div class="ctr-label">Top Colleges<br>Cracked</div><div class="ctr-bar"></div></div>
 </div>
 
+<!-- COURSES -->
 <section id="courses">
   <div class="courses-top">
     <div><p class="s-eyebrow rv">Our Programs</p><h2 class="s-title rv d1">Courses <em>Designed</em><br>to Get You In.</h2></div>
@@ -326,6 +352,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- WHY -->
 <section id="why">
   <div class="why-visual">
     <div class="why-geo-bg"></div>
@@ -353,6 +380,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- RESULTS -->
 <section id="results">
   <div class="results-head"><p class="s-eyebrow rv">Hall of Excellence</p><h2 class="s-title rv d1">Our <em>Toppers</em> speak<br>through their ranks.</h2></div>
   <div class="toppers-strip rv d2">
@@ -367,6 +395,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- GALLERY -->
 <section id="gallery">
   <div class="gallery-head"><p class="s-eyebrow rv">Studio Life</p><h2 class="s-title rv d1">Where ideas become <em>architecture.</em></h2></div>
   <div class="gallery-grid rv d2">
@@ -378,6 +407,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
 <section id="testimonials">
   <p class="s-eyebrow rv">Student Stories</p>
   <h2 class="s-title rv d1">Voices of our <em>Alumni.</em></h2>
@@ -388,6 +418,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- CONTACT -->
 <section id="contact">
   <div class="contact-left">
     <div class="contact-left-bg"></div>
@@ -413,6 +444,7 @@ footer{background:var(--ink2);border-top:1px solid var(--line);padding:4rem 3rem
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-top">
     <div><a href="#" class="f-brand-logo">Ray <span>Arch</span> Academy</a><p class="f-brand-desc">Shaping India's next generation of architects and designers — one drawing, one critique, one exam at a time.</p></div>
