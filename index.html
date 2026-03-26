@@ -4,25 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ray Arch Academy | Unfolding Space</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
 :root {
-  --bg-dark: #030407;
-  --accent-cyan: #00F0FF;
-  --accent-blue: #0044FF;
-  --text-main: #FFFFFF;
-  --text-muted: #8A93A6;
-  --glass: rgba(10, 12, 16, 0.6);
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --bg: #050608;
+  --text: #F4F4F5;
+  --text-muted: #8A8D93;
+  --accent: #00E5FF; /* Cyan Blueprint Glow */
+  --accent-glow: rgba(0, 229, 255, 0.3);
+  
+  /* 3D Model Colors */
+  --slab-top: rgba(255, 255, 255, 0.08);
+  --slab-side: rgba(255, 255, 255, 0.03);
+  --glass: rgba(0, 229, 255, 0.05);
+  --wireframe: rgba(0, 229, 255, 0.5);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 body { 
-  background-color: var(--bg-dark); 
-  color: var(--text-main); 
+  background: var(--bg); 
+  color: var(--text); 
   font-family: 'Outfit', sans-serif; 
   overflow-x: hidden; 
   -webkit-font-smoothing: antialiased;
@@ -30,372 +33,266 @@ body {
 }
 
 /* CUSTOM CURSOR */
-#cursor-dot { position: fixed; width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--accent-cyan); }
-#cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0, 240, 255, 0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }
+#cursor { position: fixed; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s; box-shadow: 0 0 10px var(--accent); }
+#cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid var(--accent-glow); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
 
-/* AMBIENT BACKGROUND GLOW */
-.ambient-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(0, 68, 255, 0.05) 0%, var(--bg-dark) 80%); }
+/* NAVIGATION */
+nav { position: fixed; top: 0; width: 100%; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; mix-blend-mode: difference; }
+.logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+.enroll-btn { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.2); padding: 0.8rem 2rem; font-family: 'Outfit'; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 50px; cursor: none; transition: 0.3s; backdrop-filter: blur(10px); }
+.enroll-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); background: rgba(0, 229, 255, 0.05); }
 
-/* NOISE TEXTURE */
-.noise { position: fixed; inset: 0; opacity: 0.03; z-index: -1; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
-
-/* NAV */
-nav { position: fixed; top: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 2rem 4rem; z-index: 1000; transition: all 0.4s ease; border-bottom: 1px solid transparent; }
-nav.scrolled { background: rgba(3, 4, 7, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); padding: 1rem 4rem; }
-.logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; }
-.logo svg { width: 20px; height: 20px; fill: var(--accent-cyan); }
-.nav-btn { background: rgba(0, 240, 255, 0.05); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 0.8rem 2rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; transition: all 0.3s; cursor: none; }
-.nav-btn:hover { background: var(--accent-cyan); color: var(--bg-dark); box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
-
-/* MAIN SCROLL CONTAINER */
-/* This defines the total scroll length of the narrative journey */
+/* --- THE SCROLL NARRATIVE CONTAINER --- */
+/* We make this very tall to create a long scrolling timeline */
 #scroll-container { height: 500vh; position: relative; }
 
-/* THE FIXED VISUALIZER (The Magic Happens Here) */
-/* This stays pinned to the screen while you scroll down the container */
-#visualizer { position: sticky; top: 0; height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; perspective: 1000px; }
+/* --- THE 3D SCENE (Sticky) --- */
+/* This stays pinned to the screen while you scroll */
+#scene-wrapper { position: sticky; top: 0; width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; perspective: 2000px; }
 
-/* SVG ARCHITECTURAL ENGINE */
-.arch-engine { width: 100%; height: 100%; max-width: 800px; max-height: 800px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
+/* Ambient Background Grid */
+.bg-grid { position: absolute; inset: -50%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 60px 60px; transform: rotateX(60deg) rotateZ(45deg); z-index: -1; pointer-events: none; }
 
-/* SVG Layer Styles */
-.layer { transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; will-change: opacity, transform, stroke-dashoffset; }
-.grid-lines { stroke: rgba(255, 255, 255, 0.05); stroke-width: 1; }
-.wireframe { stroke: var(--accent-cyan); stroke-width: 1.5; fill: none; stroke-dasharray: 2000; stroke-dashoffset: 2000; transition: stroke-dashoffset 0.8s ease; }
-.solid-mass { fill: rgba(255, 255, 255, 0.03); stroke: rgba(255, 255, 255, 0.2); stroke-width: 1; opacity: 0; }
-.render-glow { fill: url(#cyan-glow); opacity: 0; }
-.ui-node { fill: var(--bg-dark); stroke: var(--accent-cyan); stroke-width: 2; opacity: 0; transition: opacity 0.3s; }
+/* The 3D Master Container */
+#architecture { 
+  position: relative; width: 400px; height: 400px; 
+  transform-style: preserve-3d; 
+  /* Initial Isometric State */
+  transform: rotateX(60deg) rotateZ(45deg) translateZ(-100px); 
+}
 
-/* SCROLLING CONTENT OVERLAY */
-.content-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.scroll-section { height: 100vh; display: flex; align-items: center; padding: 0 10%; position: relative; }
-.text-block { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-subtle); padding: 4rem; border-radius: 12px; max-width: 500px; pointer-events: auto; opacity: 0.2; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-.text-block.active { opacity: 1; transform: translateY(0); box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0, 240, 255, 0.05) inset; }
+/* 3D BUILDING COMPONENTS */
+.layer { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; }
 
-/* TYPOGRAPHY IN BLOCKS */
-.phase-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
-.phase-tag::before { content: ''; width: 30px; height: 1px; background: var(--accent-cyan); box-shadow: 0 0 5px var(--accent-cyan); }
-.block-title { font-size: 3rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; text-transform: uppercase; }
-.block-desc { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; margin-bottom: 2rem; }
-.tech-pills { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-.pill { border: 1px solid rgba(0, 240, 255, 0.3); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.7rem; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-main); background: rgba(0, 240, 255, 0.05); }
+/* 1. Base / Plinth */
+.plinth { transform: translateZ(0px); }
+.plinth .face-top { position: absolute; width: 400px; height: 400px; background: var(--slab-top); border: 1px solid var(--wireframe); }
 
-/* ALIGNMENTS FOR DIFFERENT SECTIONS */
-#sec-1 { justify-content: flex-start; } /* Left */
-#sec-2 { justify-content: flex-end; }   /* Right */
-#sec-3 { justify-content: flex-start; } /* Left */
-#sec-4 { justify-content: center; }     /* Center (Contact) */
+/* 2. Ground Floor Core & Glass */
+.gf { transform: translateZ(20px); }
+.core { position: absolute; top: 100px; left: 100px; width: 200px; height: 200px; background: var(--slab-side); transform: translateZ(50px); border: 1px solid rgba(255,255,255,0.1); }
+.glass-wall-front { position: absolute; top: 380px; left: 20px; width: 360px; height: 120px; background: var(--glass); border: 1px solid var(--wireframe); transform-origin: top; transform: rotateX(-90deg) translateY(-120px); backdrop-filter: blur(2px); }
+.glass-wall-right { position: absolute; top: 20px; left: 380px; width: 360px; height: 120px; background: var(--glass); border: 1px solid var(--wireframe); transform-origin: left; transform: rotateY(90deg); backdrop-filter: blur(2px); }
 
-/* CONTACT FORM SPECIAL STYLING */
-#sec-4 .text-block { max-width: 800px; width: 100%; background: rgba(3, 4, 7, 0.85); border-color: rgba(0, 240, 255, 0.2); text-align: center; }
-.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; text-align: left; }
-.contact-grid.full { grid-template-columns: 1fr; }
-.neo-input { width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); padding: 1.2rem; border-radius: 6px; color: var(--text-main); font-family: 'Outfit', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s; -webkit-appearance: none; }
-.neo-input:focus { border-color: var(--accent-cyan); background: rgba(0, 240, 255, 0.02); box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
-.submit-btn { background: var(--text-main); color: var(--bg-dark); padding: 1.2rem; border: none; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; width: 100%; margin-top: 1.5rem; cursor: none; transition: all 0.3s; }
-.submit-btn:hover { background: var(--accent-cyan); box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); transform: translateY(-2px); }
+/* 3. First Floor Cantilever */
+.ff { transform: translateZ(140px); }
+.ff-slab { position: absolute; top: -20px; left: 50px; width: 350px; height: 350px; background: var(--slab-top); border: 1px solid var(--wireframe); box-shadow: inset 0 0 50px rgba(255,255,255,0.02); }
 
-/* FOOTER */
-footer { position: relative; z-index: 10; background: #010101; padding: 4rem 10%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); }
-.f-details { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
-.f-details strong { color: var(--text-main); font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+/* 4. Roof & Upper Structure (This lifts off during the cut) */
+.roof-layer { transform: translateZ(160px); }
+.roof-core { position: absolute; top: 50px; left: 100px; width: 200px; height: 150px; background: var(--slab-side); border: 1px solid rgba(255,255,255,0.1); transform: translateZ(50px); }
+.roof-slab { position: absolute; top: 0px; left: 50px; width: 350px; height: 350px; background: rgba(5,6,8,0.9); border: 2px solid var(--accent); transform: translateZ(100px); box-shadow: 0 0 30px var(--accent-glow); }
 
-/* SCROLL PROMPT */
-.scroll-prompt { position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); z-index: 500; transition: opacity 0.3s; pointer-events: none; }
-.mouse-icon { width: 24px; height: 36px; border: 1px solid var(--text-muted); border-radius: 20px; position: relative; display: flex; justify-content: center; }
-.mouse-wheel { width: 4px; height: 8px; background: var(--accent-cyan); border-radius: 4px; margin-top: 6px; animation: scrollWheel 2s infinite cubic-bezier(0.15, 0.41, 0.69, 0.94); box-shadow: 0 0 10px var(--accent-cyan); }
-@keyframes scrollWheel { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
+/* --- UI TEXT PANELS (Scroll Sync) --- */
+.ui-panel { position: absolute; top: 50%; left: 10%; transform: translateY(-50%); width: 400px; z-index: 100; pointer-events: none; }
+.step-text { position: absolute; top: 0; left: 0; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.step-text.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.phase { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; }
+.phase::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
+.title { font-size: 3.5rem; font-weight: 300; line-height: 1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+.title strong { font-weight: 700; }
+.desc { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+/* --- FINAL CONTACT FORM --- */
+#contact-section { position: absolute; right: 10%; top: 50%; transform: translateY(-50%); width: 450px; opacity: 0; pointer-events: none; z-index: 200; }
+.c-box { background: rgba(10, 12, 15, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 3rem; border-radius: 12px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+.c-box h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.c-box p { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2rem; }
+.input-group { margin-bottom: 1.5rem; }
+.form-control { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); color: var(--text); padding: 1rem 0; font-family: 'Outfit'; font-size: 1rem; outline: none; transition: 0.3s; }
+.form-control:focus { border-bottom-color: var(--accent); }
+.submit-btn { background: var(--text); color: var(--bg); border: none; padding: 1.2rem; width: 100%; font-family: 'Outfit'; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; margin-top: 1rem; cursor: none; transition: 0.3s; }
+.submit-btn:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+
+/* Scroll Indicator */
+.scroll-indicator { position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); z-index: 100; opacity: 1; transition: 0.5s; }
+.mouse { width: 24px; height: 36px; border: 1px solid var(--text-muted); border-radius: 20px; position: relative; }
+.wheel { width: 4px; height: 8px; background: var(--accent); border-radius: 4px; margin: 6px auto 0; animation: scroll 2s infinite; box-shadow: 0 0 10px var(--accent); }
+@keyframes scroll { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
 
 @media(max-width: 900px) {
-  nav { padding: 1.5rem 2rem; } .nav-btn { display: none; }
-  .scroll-section { padding: 0 2rem; }
-  .text-block { padding: 2.5rem; }
-  .block-title { font-size: 2.2rem; }
-  .contact-grid { grid-template-columns: 1fr; }
-  footer { flex-direction: column; gap: 2rem; text-align: center; }
+  nav { padding: 1.5rem 2rem; } .enroll-btn { display: none; }
+  .ui-panel { left: 5%; width: 90%; top: 20%; transform: none; }
+  .title { font-size: 2.5rem; }
+  #architecture { transform: scale(0.6) rotateX(60deg) rotateZ(45deg) translateZ(-100px) !important; margin-top: 20vh; }
+  #contact-section { right: 5%; width: 90%; top: 55%; transform: translateY(-50%); }
+  .c-box { padding: 2rem; }
 }
 </style>
 </head>
 <body>
 
-<div class="ambient-glow"></div>
-<div class="noise"></div>
-
-<div id="cursor-dot"></div>
+<div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<nav id="mainNav">
-  <div class="logo">
-    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/></svg>
-    RAY ARCH.
-  </div>
-  <button class="nav-btn" onclick="scrollToEnd()">Apply 2025</button>
+<nav>
+  <div class="logo">RAY ARCH.</div>
+  <button class="enroll-btn hover-target" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">Apply 2025</button>
 </nav>
 
-<div class="scroll-prompt" id="scroll-prompt">
-  <span>Initiate Sequence</span>
-  <div class="mouse-icon"><div class="mouse-wheel"></div></div>
+<div class="scroll-indicator" id="scroll-hint">
+  <span>Scroll to Unfold</span>
+  <div class="mouse"><div class="wheel"></div></div>
 </div>
 
 <div id="scroll-container">
+  
+  <div id="scene-wrapper">
+    <div class="bg-grid"></div>
 
-  <div id="visualizer">
-    <svg class="arch-engine" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="cyan-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(0, 240, 255, 0.4)" />
-          <stop offset="100%" stop-color="rgba(0, 240, 255, 0)" />
-        </radialGradient>
-      </defs>
-
-      <g class="layer grid-lines" id="svg-grid">
-        <path d="M400 650 L100 480 L400 310 L700 480 Z" fill="none" />
-        <path d="M400 550 L150 410 L400 270 L650 410 Z" fill="none" />
-        <line x1="250" y1="395" x2="550" y2="565" />
-        <line x1="550" y1="395" x2="250" y2="565" />
-      </g>
-
-      <g class="layer solid-mass" id="svg-solid">
-        <path d="M400 550 L200 440 L400 330 L600 440 Z" />
-        <path d="M400 550 L400 570 L600 460 L600 440 Z" fill="rgba(255,255,255,0.01)" />
-        <path d="M250 412 L250 200 L350 145 L350 357 Z" />
-        <path d="M550 412 L550 200 L450 145 L450 357 Z" />
-        <path d="M150 250 L400 110 L650 250 L400 390 Z" fill="rgba(255,255,255,0.05)" stroke="var(--accent-cyan)" />
-      </g>
-
-      <g class="layer wireframe" id="svg-wire">
-        <line x1="400" y1="110" x2="400" y2="650" stroke-dasharray="5 10" stroke-width="1" />
-        <line x1="250" y1="200" x2="250" y2="412" />
-        <line x1="350" y1="145" x2="350" y2="357" />
-        <line x1="550" y1="200" x2="550" y2="412" />
-        <line x1="450" y1="145" x2="450" y2="357" />
-        <path d="M150 250 L400 110 L650 250 L400 390 Z" />
-        <path d="M200 440 L400 330 L600 440 L400 550 Z" />
-        <circle class="ui-node" cx="400" cy="110" r="6" />
-        <circle class="ui-node" cx="150" cy="250" r="6" />
-        <circle class="ui-node" cx="650" cy="250" r="6" />
-      </g>
-
-      <g class="layer render-glow" id="svg-glow">
-        <circle cx="400" cy="250" r="250" />
-        <path d="M150 250 L400 390 L400 650 L150 510 Z" fill="rgba(0, 240, 255, 0.05)" />
-      </g>
-    </svg>
-  </div>
-
-  <div class="content-layer">
-    
-    <section class="scroll-section" id="sec-1">
-      <div class="text-block">
-        <div class="phase-tag">Phase 01 // Origin</div>
-        <h2 class="block-title">The<br>Blueprint.</h2>
-        <p class="block-desc">Everything begins with a line. Master spatial awareness, perspective drawing, and the core aptitude required to crack NATA and JEE B.Arch.</p>
-        <div class="tech-pills">
-          <span class="pill">Perspective Studio</span>
-          <span class="pill">Aptitude Logic</span>
-        </div>
+    <div class="ui-panel">
+      <div class="step-text active" id="text-1">
+        <div class="phase">Phase 01 // The Origin</div>
+        <h1 class="title">Where Space<br><strong>Begins.</strong></h1>
+        <p class="desc">A monolithic structure representing the foundation of architecture. We prepare students to conquer NATA and JEE B.Arch with elite spatial awareness.</p>
       </div>
-    </section>
-
-    <section class="scroll-section" id="sec-2">
-      <div class="text-block">
-        <div class="phase-tag">Phase 02 // Execution</div>
-        <h2 class="block-title">Building<br>Mass.</h2>
-        <p class="block-desc">Transition from paper to pixels. Construct precise 2D floor plans and elevate them into intelligent, parametric 3D BIM models.</p>
-        <div class="tech-pills">
-          <span class="pill">AutoCAD 2D</span>
-          <span class="pill">Revit Architecture</span>
-        </div>
+      <div class="step-text" id="text-2">
+        <div class="phase">Phase 02 // Sectional Cut</div>
+        <h1 class="title">Revealing the<br><strong>Core.</strong></h1>
+        <p class="desc">We dissect design. Transition from entrance exams into professional studio workflows. Master AutoCAD drafting and structural detailing.</p>
       </div>
-    </section>
-
-    <section class="scroll-section" id="sec-3">
-      <div class="text-block">
-        <div class="phase-tag">Phase 03 // Visualization</div>
-        <h2 class="block-title">Hyper<br>Realism.</h2>
-        <p class="block-desc">Breathe life into geometry. Manipulate light, shadow, and texture to produce cinematic walk-throughs and photorealistic renders.</p>
-        <div class="tech-pills">
-          <span class="pill">SketchUp Pro</span>
-          <span class="pill">Lumion</span>
-          <span class="pill">V-Ray</span>
-        </div>
+      <div class="step-text" id="text-3">
+        <div class="phase">Phase 03 // BIM Integration</div>
+        <h1 class="title">Parametric<br><strong>Reality.</strong></h1>
+        <p class="desc">The perspective shifts. Enter the world of Building Information Modeling (Revit). Design intelligently, not just visually.</p>
       </div>
-    </section>
+      <div class="step-text" id="text-4">
+        <div class="phase">Phase 04 // Visualization</div>
+        <h1 class="title">Hyper<br><strong>Rendering.</strong></h1>
+        <p class="desc">Breathe life into geometry. Master Lumion and V-Ray to produce cinematic, photorealistic walk-throughs that win clients.</p>
+      </div>
+    </div>
 
-    <section class="scroll-section" id="sec-4">
-      <div class="text-block">
-        <div class="phase-tag" style="justify-content: center;">System Ready // Enroll 2025</div>
-        <h2 class="block-title" style="margin-bottom: 0.5rem;">Secure Your Seat.</h2>
-        <p class="block-desc" style="max-width: 500px; margin: 0 auto;">Taught by practicing architects at Ray Design & Build. Stop studying theory. Start building your portfolio.</p>
-        
+    <div id="contact-section">
+      <div class="c-box">
+        <h3>Secure Your Seat.</h3>
+        <p>Ray Design & Build Studio // 2025</p>
         <form onsubmit="event.preventDefault(); this.querySelector('.submit-btn').innerText='Application Secured ✓'; this.querySelector('.submit-btn').style.background='#fff'; this.querySelector('.submit-btn').style.color='#000';">
-          <div class="contact-grid">
-            <input type="text" class="neo-input" placeholder="First Name" required>
-            <input type="text" class="neo-input" placeholder="Last Name">
-          </div>
-          <div class="contact-grid full" style="margin-top: 1.5rem;">
-            <input type="tel" class="neo-input" placeholder="Phone Number (+91)" required>
-            <select class="neo-input" required>
-              <option value="" disabled selected>Select Primary Track...</option>
-              <option>NATA / JEE (Entrance Prep)</option>
-              <option>AutoCAD / 2D Drafting</option>
-              <option>Revit (BIM Integration)</option>
-              <option>Lumion / V-Ray (Rendering)</option>
+          <div class="input-group"><input type="text" class="form-control hover-target" placeholder="Full Name" required></div>
+          <div class="input-group"><input type="tel" class="form-control hover-target" placeholder="Phone Number (+91)" required></div>
+          <div class="input-group">
+            <select class="form-control hover-target" required>
+              <option value="" disabled selected>Select Program...</option>
+              <option>NATA / JEE Prep</option>
+              <option>AutoCAD / Revit (BIM)</option>
+              <option>SketchUp / Lumion (Render)</option>
             </select>
           </div>
-          <button type="submit" class="submit-btn">Initialize Enrollment</button>
+          <button type="submit" class="submit-btn hover-target">Initialize Enrollment</button>
         </form>
       </div>
-    </section>
+    </div>
 
+    <div id="architecture">
+      
+      <div class="layer plinth">
+        <div class="face-top"></div>
+      </div>
+      
+      <div class="layer gf" id="anim-gf">
+        <div class="core"></div>
+        <div class="glass-wall-front" id="anim-glass-1"></div>
+        <div class="glass-wall-right" id="anim-glass-2"></div>
+      </div>
+      
+      <div class="layer ff" id="anim-ff">
+        <div class="ff-slab"></div>
+      </div>
+      
+      <div class="layer roof-layer" id="anim-roof">
+        <div class="roof-core"></div>
+        <div class="roof-slab" id="anim-roof-glow"></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
-<footer>
-  <div class="f-details">
-    <strong>Ray Arch Academy</strong><br>
-    A Ray Design & Build Initiative<br>
-    Chennai, Tamil Nadu, India
-  </div>
-  <div class="f-details" style="text-align: right;">
-    <strong>Direct Comm Line</strong><br>
-    +91 91764 63826<br>
-    hello@rayarchacademy.in
-  </div>
-</footer>
-
 <script>
-// --- CUSTOM CURSOR LOGIC ---
-const dot = document.getElementById('cursor-dot');
+// --- CUSTOM CURSOR ---
+const dot = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
 let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
 let ringX = mouseX, ringY = mouseY;
 
 document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  dot.style.left = mouseX + 'px';
-  dot.style.top = mouseY + 'px';
+  mouseX = e.clientX; mouseY = e.clientY;
+  dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
 });
 
 function animateCursor() {
-  ringX += (mouseX - ringX) * 0.15;
-  ringY += (mouseY - ringY) * 0.15;
-  ring.style.left = ringX + 'px';
-  ring.style.top = ringY + 'px';
+  ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+  ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
   requestAnimationFrame(animateCursor);
 }
 animateCursor();
 
-// Hover interactions
-document.querySelectorAll('a, button, input, select').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    ring.style.width = '60px'; ring.style.height = '60px';
-    ring.style.background = 'rgba(0, 240, 255, 0.05)';
-  });
-  el.addEventListener('mouseleave', () => {
-    ring.style.width = '40px'; ring.style.height = '40px';
-    ring.style.background = 'transparent';
-  });
+document.querySelectorAll('.hover-target').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width = '60px'; ring.style.height = '60px'; ring.style.background = 'rgba(0, 229, 255, 0.1)'; });
+  el.addEventListener('mouseleave', () => { ring.style.width = '40px'; ring.style.height = '40px'; ring.style.background = 'transparent'; });
 });
 
-// --- SCROLL ENGINE LOGIC ---
-const nav = document.getElementById('mainNav');
-const prompt = document.getElementById('scroll-prompt');
-const textBlocks = document.querySelectorAll('.text-block');
+// --- GSAP SCROLL NARRATIVE (THE BEAST) ---
+gsap.registerPlugin(ScrollTrigger);
 
-// SVG Elements
-const svgEngine = document.querySelector('.arch-engine');
-const svgWire = document.getElementById('svg-wire');
-const svgSolid = document.getElementById('svg-solid');
-const svgGlow = document.getElementById('svg-glow');
-const uiNodes = document.querySelectorAll('.ui-node');
-
-function updateScroll() {
-  // Calculate total scroll progress (0 to 1)
-  const scrollTop = window.scrollY;
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  let progress = Math.max(0, Math.min(1, scrollTop / maxScroll));
-
-  // Nav & Prompt visibility
-  if (scrollTop > 50) {
-    nav.classList.add('scrolled');
-    prompt.style.opacity = '0';
-  } else {
-    nav.classList.remove('scrolled');
-    prompt.style.opacity = '1';
-  }
-
-  // --- 1. ACTIVATE TEXT BLOCKS ---
-  // Divide the scroll into 4 segments (0-0.25, 0.25-0.5, 0.5-0.75, 0.75-1)
-  textBlocks.forEach((block, index) => {
-    const triggerStart = (index * 0.25) - 0.1;
-    const triggerEnd = ((index + 1) * 0.25) + 0.1;
-    
-    if (progress > triggerStart && progress < triggerEnd) {
-      block.classList.add('active');
-    } else {
-      block.classList.remove('active');
-    }
-  });
-
-  // --- 2. MORPH THE SVG ARCHITECTURE ---
-  // STAGE 1: Drawing the Wireframe (0 to 0.25)
-  if (progress < 0.3) {
-    // Map progress 0-0.25 to dashoffset 2000-0
-    let drawProgress = Math.min(1, progress / 0.25);
-    svgWire.style.strokeDashoffset = 2000 - (2000 * drawProgress);
-    svgSolid.style.opacity = '0';
-    svgGlow.style.opacity = '0';
-    svgEngine.style.transform = 'translate(-50%, -50%) scale(1)';
-    uiNodes.forEach(n => n.style.opacity = drawProgress > 0.8 ? '1' : '0');
-  }
-  
-  // STAGE 2: Solid Massing (Revit/BIM) (0.3 to 0.6)
-  else if (progress >= 0.3 && progress < 0.6) {
-    let massProgress = Math.min(1, (progress - 0.3) / 0.2);
-    svgWire.style.strokeDashoffset = '0';
-    svgSolid.style.opacity = massProgress.toString();
-    svgGlow.style.opacity = '0';
-    // Shift the graphic to the right slightly to balance the left text block
-    svgEngine.style.transform = 'translate(-30%, -50%) scale(1.1)';
-  }
-  
-  // STAGE 3: Render Glow (Lumion/VRay) (0.6 to 0.85)
-  else if (progress >= 0.6 && progress < 0.85) {
-    let glowProgress = Math.min(1, (progress - 0.6) / 0.2);
-    svgSolid.style.opacity = '1';
-    svgGlow.style.opacity = glowProgress.toString();
-    // Shift back to center-left
-    svgEngine.style.transform = 'translate(-60%, -50%) scale(1.2)';
-  }
-  
-  // STAGE 4: Final Frame (Fades back slightly for the form)
-  else {
-    svgEngine.style.transform = 'translate(-50%, -50%) scale(0.9)';
-    svgGlow.style.opacity = '0.3';
-    svgWire.style.strokeDashoffset = '0';
-  }
-}
-
-// Use RequestAnimationFrame for butter-smooth updates instead of raw onscroll
-let ticking = false;
+// Hide scroll hint on scroll
 window.addEventListener('scroll', () => {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      updateScroll();
-      ticking = false;
-    });
-    ticking = true;
+  if(window.scrollY > 100) document.getElementById('scroll-hint').style.opacity = 0;
+  else document.getElementById('scroll-hint').style.opacity = 1;
+});
+
+// Create a master timeline locked to the scroll container
+const tl = gsap.timeline({
+  scrollTrigger: {
+    trigger: "#scroll-container",
+    start: "top top",
+    end: "bottom bottom",
+    scrub: 1 // Smooth scrubbing (takes 1 second to catch up to scroll)
   }
 });
 
-// Initial trigger
-updateScroll();
+// --- SCENE 1 to 2: THE SECTIONAL CUT ---
+// Text swap
+tl.to("#text-1", { opacity: 0, y: -30, duration: 1 })
+  .to("#text-2", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
 
-function scrollToEnd() {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-}
+// Architecture transforms
+tl.to("#anim-roof", { z: 400, opacity: 0.2, duration: 2 }, "<") // Roof lifts way up
+  .to("#anim-glass-1", { opacity: 0.1, duration: 2 }, "<")      // Front glass fades to reveal inside
+  .to("#anim-glass-2", { opacity: 0.1, duration: 2 }, "<");
+
+// --- SCENE 2 to 3: PERSPECTIVE SHIFT & ZOOM ---
+tl.to("#text-2", { opacity: 0, y: -30, duration: 1 })
+  .to("#text-3", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
+
+// Rotate from Isometric to a dramatic low angle
+tl.to("#architecture", { 
+  rotateX: 75, 
+  rotateZ: 15, 
+  scale: 1.3, 
+  x: -150, // Move model left to balance text on right? No, text is on left. Move model right.
+  x: 100,
+  duration: 2 
+}, "<")
+.to(".core", { backgroundColor: "rgba(0, 229, 255, 0.1)", borderColor: "#00E5FF", duration: 2 }, "<");
+
+// --- SCENE 3 to 4: HYPER RENDERING & CONTACT FORM ---
+tl.to("#text-3", { opacity: 0, y: -30, duration: 1 })
+  .to("#text-4", { opacity: 1, y: 0, duration: 1, pointerEvents: "auto" }, "<");
+
+// Model shifts back, gets extremely glowing, form slides in
+tl.to("#architecture", { 
+  rotateX: 50, 
+  rotateZ: -30, 
+  scale: 1,
+  x: -200, // Move model to the left
+  duration: 2 
+}, "<")
+.to("#anim-roof", { z: 160, opacity: 1, duration: 2 }, "<") // Roof drops back down
+  .to("#anim-roof-glow", { boxShadow: "0 0 100px rgba(0, 229, 255, 0.8)", borderColor: "#fff", duration: 2 }, "<")
+  .to("#contact-section", { opacity: 1, x: -50, pointerEvents: "auto", duration: 2 }, "<");
+
 </script>
 
 </body>
