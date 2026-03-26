@@ -1,1212 +1,466 @@
-:root {
-  --ink-950: #090b0f;
-  --ink-900: #10131b;
-  --ink-800: #171c27;
-  --stone-50: #f3ede1;
-  --stone-100: #e7dece;
-  --stone-300: #b7ad99;
-  --copper-400: #b98455;
-  --copper-500: #d79a66;
-  --teal-400: #4e8f88;
-  --line: rgba(231, 222, 206, 0.12);
-  --shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
-  --radius-md: 20px;
-  --radius-sm: 14px;
-  --max-width: 1220px;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: "Manrope", sans-serif;
-  color: var(--stone-50);
-  background:
-    radial-gradient(circle at top left, rgba(78, 143, 136, 0.14), transparent 30%),
-    radial-gradient(circle at 80% 18%, rgba(215, 154, 102, 0.18), transparent 24%),
-    linear-gradient(180deg, #0a0d12 0%, #090b0f 50%, #11161f 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 72px 72px;
-  opacity: 0.18;
-  pointer-events: none;
-  mask-image: radial-gradient(circle at center, black 32%, transparent 80%);
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-.site-shell {
-  position: fixed;
-  inset: 24px;
-  border: 1px solid rgba(231, 222, 206, 0.08);
-  border-radius: 32px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--copper-500);
-  box-shadow: 0 0 18px rgba(215, 154, 102, 0.8);
-  transform: translate(-50%, -50%);
-}
-
-.cursor-ring {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid rgba(215, 154, 102, 0.35);
-  transform: translate(-50%, -50%);
-}
-
-.topbar,
-.section,
-.metrics,
-.footer {
-  position: relative;
-  z-index: 1;
-}
-
-.topbar {
-  width: min(calc(100% - 48px), var(--max-width));
-  margin: 24px auto 0;
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  position: sticky;
-  top: 24px;
-  background: rgba(9, 11, 15, 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-  border-radius: 24px;
-}
-
-.topbar.is-scrolled {
-  border-color: rgba(215, 154, 102, 0.18);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--ink-950);
-  background: linear-gradient(135deg, var(--copper-500), #f0c08e);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
-}
-
-.brand-text {
-  display: grid;
-  gap: 2px;
-}
-
-.brand-text strong {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.98rem;
-  letter-spacing: 0.02em;
-}
-
-.brand-text small {
-  font-size: 0.73rem;
-  color: rgba(231, 222, 206, 0.62);
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
-
-.nav a {
-  font-size: 0.83rem;
-  color: rgba(231, 222, 206, 0.8);
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.nav a:hover {
-  color: var(--stone-50);
-  transform: translateY(-1px);
-}
-
-.nav-cta {
-  padding: 12px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(215, 154, 102, 0.2);
-  background: rgba(215, 154, 102, 0.08);
-}
-
-.menu-toggle {
-  display: none;
-  width: 52px;
-  height: 52px;
-  border: 1px solid rgba(231, 222, 206, 0.12);
-  border-radius: 16px;
-  background: transparent;
-  color: var(--stone-50);
-  cursor: pointer;
-}
-
-.menu-toggle span {
-  display: block;
-  width: 20px;
-  height: 1px;
-  margin: 6px auto;
-  background: currentColor;
-}
-
-.hero,
-.metrics,
-.section,
-.footer {
-  width: min(calc(100% - 48px), var(--max-width));
-  margin-inline: auto;
-}
-
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(380px, 0.95fr);
-  gap: 36px;
-  align-items: center;
-  min-height: calc(100vh - 124px);
-  padding: 72px 0 48px;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 20px;
-  color: var(--copper-500);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.76rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-
-.eyebrow::before {
-  content: "";
-  width: 32px;
-  height: 1px;
-  background: currentColor;
-}
-
-.hero-title,
-.section-title {
-  margin: 0;
-  font-family: "Fraunces", serif;
-  font-weight: 600;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-}
-
-.hero-title {
-  font-size: clamp(3.4rem, 9vw, 6.8rem);
-  max-width: 9ch;
-}
-
-.hero-title span {
-  display: block;
-  color: var(--copper-500);
-  font-style: italic;
-}
-
-.hero-text,
-.section-text,
-.program-card p,
-.journey-step p,
-.feature-card p,
-.testimonial p,
-.faq-item p,
-.contact-panel p,
-.footer p {
-  color: rgba(231, 222, 206, 0.72);
-  line-height: 1.8;
-}
-
-.hero-text {
-  max-width: 60ch;
-  margin: 24px 0 0;
-  font-size: 1rem;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 32px;
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  padding: 0 22px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.button:hover {
-  transform: translateY(-2px);
-}
-
-.button-primary {
-  color: var(--ink-950);
-  background: linear-gradient(135deg, var(--copper-500), #e5b17c);
-  box-shadow: 0 18px 40px rgba(185, 132, 85, 0.22);
-}
-
-.button-secondary {
-  color: var(--stone-50);
-  border-color: rgba(231, 222, 206, 0.14);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.hero-points {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  list-style: none;
-  padding: 0;
-  margin: 32px 0 0;
-}
-
-.hero-points li {
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(231, 222, 206, 0.1);
-  color: rgba(231, 222, 206, 0.78);
-  font-size: 0.88rem;
-}
-
-.hero-visual {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.hero-frame {
-  width: min(100%, 560px);
-  padding: 28px;
-  border-radius: 32px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(14, 17, 24, 0.8);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-  box-shadow: var(--shadow);
-}
-
-.grid-plane {
-  height: 20px;
-  width: 100%;
-  margin-bottom: 16px;
-  border-radius: 999px;
-  background:
-    repeating-linear-gradient(90deg, transparent, transparent 34px, rgba(215, 154, 102, 0.18) 34px, rgba(215, 154, 102, 0.18) 35px),
-    rgba(255, 255, 255, 0.03);
-}
-
-.model-stage {
-  position: relative;
-  height: 480px;
-  overflow: hidden;
-  border-radius: 26px;
-  background:
-    radial-gradient(circle at 50% 42%, rgba(78, 143, 136, 0.18), transparent 38%),
-    linear-gradient(180deg, rgba(215, 154, 102, 0.08), transparent 40%),
-    linear-gradient(180deg, rgba(9, 11, 15, 0.55), rgba(9, 11, 15, 0.92));
-  border: 1px solid rgba(231, 222, 206, 0.08);
-  perspective: 1200px;
-  transition: transform 0.2s ease;
-}
-
-.model-stage::before {
-  content: "";
-  position: absolute;
-  inset: 12% 10%;
-  border-radius: 28px;
-  background-image:
-    linear-gradient(rgba(231, 222, 206, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(231, 222, 206, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
-  transform: rotateX(72deg) rotateZ(-24deg);
-  transform-style: preserve-3d;
-}
-
-.stage-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(215, 154, 102, 0.24);
-}
-
-.stage-ring-one {
-  width: 360px;
-  height: 360px;
-  top: 52px;
-  left: 98px;
-  animation: pulseOrbit 12s linear infinite;
-}
-
-.stage-ring-two {
-  width: 220px;
-  height: 220px;
-  top: 120px;
-  left: 164px;
-  border-style: dashed;
-  animation: pulseOrbit 10s linear infinite reverse;
-}
-
-.mass {
-  position: absolute;
-  left: 50%;
-  width: 230px;
-  transform-style: preserve-3d;
-  border: 1px solid rgba(215, 154, 102, 0.2);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.04);
-}
-
-.mass-base {
-  top: 285px;
-  height: 46px;
-  margin-left: -115px;
-  transform: rotateX(72deg) rotateZ(-28deg);
-}
-
-.mass-core {
-  top: 200px;
-  height: 110px;
-  width: 150px;
-  margin-left: -40px;
-  background: linear-gradient(180deg, rgba(78, 143, 136, 0.22), rgba(255, 255, 255, 0.02));
-  transform: rotateX(72deg) rotateZ(-28deg) translateZ(24px);
-}
-
-.mass-cantilever {
-  top: 146px;
-  height: 54px;
-  width: 250px;
-  margin-left: -92px;
-  border-color: rgba(215, 154, 102, 0.3);
-  transform: rotateX(72deg) rotateZ(-28deg) translateZ(82px);
-}
-
-.mass-lift {
-  top: 96px;
-  height: 38px;
-  width: 200px;
-  margin-left: -66px;
-  background: linear-gradient(180deg, rgba(215, 154, 102, 0.22), rgba(255, 255, 255, 0.04));
-  transform: rotateX(72deg) rotateZ(-28deg) translateZ(128px);
-  animation: liftPlane 5s ease-in-out infinite;
-}
-
-.axis {
-  position: absolute;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: rgba(231, 222, 206, 0.48);
-}
-
-.axis::before {
-  content: "";
-  position: absolute;
-  background: rgba(231, 222, 206, 0.18);
-}
-
-.axis-x {
-  bottom: 54px;
-  left: 68px;
-}
-
-.axis-x::before {
-  top: -12px;
-  left: -8px;
-  width: 120px;
-  height: 1px;
-}
-
-.axis-y {
-  right: 38px;
-  top: 130px;
-}
-
-.axis-y::before {
-  top: -10px;
-  right: -8px;
-  width: 1px;
-  height: 90px;
-}
-
-.axis-z {
-  top: 44px;
-  left: 72px;
-}
-
-.axis-z::before {
-  top: 50%;
-  left: -10px;
-  width: 92px;
-  height: 1px;
-}
-
-.hero-caption {
-  display: grid;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-}
-
-.hero-caption span {
-  display: block;
-  color: var(--copper-500);
-  font-size: 0.76rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.hero-caption strong {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1rem;
-}
-
-.hero-caption p {
-  margin: 0;
-  color: rgba(231, 222, 206, 0.66);
-  line-height: 1.7;
-}
-
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  padding: 24px 0 0;
-}
-
-.metric {
-  padding: 24px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-}
-
-.metric strong {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--copper-500);
-  font-family: "Fraunces", serif;
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1;
-}
-
-.metric span {
-  color: rgba(231, 222, 206, 0.7);
-  line-height: 1.7;
-  font-size: 0.95rem;
-}
-
-.section {
-  padding: 108px 0 0;
-}
-
-.section-head,
-.journey-intro {
-  max-width: 760px;
-}
-
-.section-title {
-  font-size: clamp(2.4rem, 5vw, 4.6rem);
-}
-
-.section-text {
-  margin-top: 20px;
-  max-width: 62ch;
-}
-
-.program-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 38px;
-}
-
-.program-card,
-.journey-step,
-.feature-card,
-.result-card,
-.testimonial,
-.faq-item,
-.contact-panel,
-.contact-form,
-.studio-tile {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-}
-
-.program-card::before,
-.journey-step::before,
-.feature-card::before,
-.result-card::before,
-.studio-tile::before,
-.contact-form::before,
-.contact-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(215, 154, 102, 0.12), transparent 38%);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.program-card:hover::before,
-.journey-step:hover::before,
-.feature-card:hover::before,
-.result-card:hover::before,
-.studio-tile:hover::before,
-.contact-form:hover::before,
-.contact-panel:hover::before {
-  opacity: 1;
-}
-
-.program-card {
-  padding: 24px;
-  min-height: 290px;
-}
-
-.program-number,
-.journey-step span,
-.result-card span,
-.tile-copy span,
-.contact-meta span {
-  color: var(--copper-500);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.74rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.program-card h3,
-.journey-step h3,
-.feature-card h3,
-.result-card h3,
-.tile-copy h3 {
-  margin: 16px 0 10px;
-  font-family: "Fraunces", serif;
-  font-size: 1.65rem;
-  font-weight: 600;
-  line-height: 1.05;
-}
-
-.program-card ul {
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-
-.program-card li {
-  color: rgba(231, 222, 206, 0.72);
-  padding-left: 18px;
-  position: relative;
-}
-
-.program-card li::before {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  left: 0;
-  top: 0.6em;
-  background: linear-gradient(135deg, var(--copper-500), var(--teal-400));
-}
-
-.journey-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 36px;
-}
-
-.journey-step,
-.feature-card,
-.result-card {
-  padding: 26px;
-}
-
-.feature-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 34px;
-}
-
-.why-panel {
-  max-width: 760px;
-}
-
-.results-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 36px;
-}
-
-.result-card strong {
-  display: block;
-  margin: 18px 0 8px;
-  color: var(--stone-50);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.2rem;
-}
-
-.result-card p {
-  margin: 0;
-  color: rgba(231, 222, 206, 0.7);
-}
-
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 22px;
-}
-
-.testimonial {
-  margin: 0;
-  padding: 28px;
-}
-
-.testimonial p {
-  margin: 0 0 18px;
-  font-family: "Fraunces", serif;
-  font-size: 1.15rem;
-  line-height: 1.7;
-}
-
-.testimonial footer {
-  color: rgba(231, 222, 206, 0.6);
-  font-size: 0.9rem;
-}
-
-.studio-grid {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr;
-  gap: 18px;
-  margin-top: 38px;
-}
-
-.studio-tile {
-  min-height: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.studio-tile-large {
-  grid-row: span 2;
-  min-height: 578px;
-}
-
-.tile-art {
-  flex: 1;
-  min-height: 180px;
-}
-
-.tile-art-lines {
-  background:
-    radial-gradient(circle at 30% 30%, rgba(78, 143, 136, 0.18), transparent 24%),
-    linear-gradient(135deg, transparent 40%, rgba(215, 154, 102, 0.16) 40%, rgba(215, 154, 102, 0.16) 41%, transparent 41%),
-    linear-gradient(90deg, rgba(231, 222, 206, 0.08) 1px, transparent 1px),
-    linear-gradient(rgba(231, 222, 206, 0.08) 1px, transparent 1px);
-  background-size: auto, auto, 54px 54px, 54px 54px;
-}
-
-.tile-art-orbit {
-  background:
-    radial-gradient(circle at center, rgba(215, 154, 102, 0.2) 0 2px, transparent 2px),
-    radial-gradient(circle at center, transparent 0 52px, rgba(231, 222, 206, 0.12) 52px 53px, transparent 53px),
-    radial-gradient(circle at center, transparent 0 88px, rgba(78, 143, 136, 0.18) 88px 89px, transparent 89px),
-    linear-gradient(180deg, rgba(9, 11, 15, 0.1), rgba(9, 11, 15, 0.7));
-}
-
-.tile-art-grid {
-  background:
-    linear-gradient(135deg, rgba(215, 154, 102, 0.16), transparent 38%),
-    linear-gradient(rgba(231, 222, 206, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(231, 222, 206, 0.07) 1px, transparent 1px);
-  background-size: auto, 38px 38px, 38px 38px;
-}
-
-.tile-art-glow {
-  background:
-    radial-gradient(circle at 70% 40%, rgba(78, 143, 136, 0.28), transparent 26%),
-    radial-gradient(circle at 38% 70%, rgba(215, 154, 102, 0.24), transparent 30%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
-}
-
-.tile-copy {
-  padding: 22px;
-}
-
-.faq-list {
-  display: grid;
-  gap: 14px;
-  margin-top: 38px;
-}
-
-.faq-item {
-  padding: 0 22px;
-}
-
-.faq-item summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 22px 32px 22px 0;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1rem;
-  position: relative;
-}
-
-.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq-item summary::after {
-  content: "+";
-  position: absolute;
-  right: 0;
-  top: 20px;
-  color: var(--copper-500);
-  font-size: 1.3rem;
-}
-
-.faq-item[open] summary::after {
-  content: "-";
-}
-
-.faq-item p {
-  margin: 0 0 22px;
-  max-width: 70ch;
-}
-
-.contact {
-  display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
-  gap: 18px;
-  padding-bottom: 72px;
-}
-
-.contact-panel,
-.contact-form {
-  padding: 28px;
-}
-
-.contact-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 28px;
-}
-
-.contact-meta a,
-.contact-meta div {
-  display: grid;
-  gap: 8px;
-  padding: 18px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(231, 222, 206, 0.08);
-}
-
-.contact-meta strong {
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.contact-form {
-  display: grid;
-  gap: 16px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.contact-form label {
-  display: grid;
-  gap: 8px;
-}
-
-.contact-form label span {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.74rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(231, 222, 206, 0.64);
-}
-
-.contact-form input,
-.contact-form select,
-.contact-form textarea {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(231, 222, 206, 0.1);
-  background: rgba(8, 10, 14, 0.78);
-  color: var(--stone-50);
-  outline: none;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.contact-form input:focus,
-.contact-form select:focus,
-.contact-form textarea:focus {
-  border-color: rgba(215, 154, 102, 0.45);
-  background: rgba(8, 10, 14, 0.95);
-}
-
-.contact-form textarea {
-  min-height: 138px;
-  resize: vertical;
-}
-
-.form-submit {
-  border: 0;
-  cursor: pointer;
-}
-
-.form-status {
-  min-height: 1.5em;
-  margin: 0;
-  color: rgba(231, 222, 206, 0.72);
-}
-
-.footer {
-  padding: 0 0 48px;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 24px;
-  align-items: end;
-}
-
-.footer-brand {
-  display: grid;
-  gap: 16px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 16px 22px;
-}
-
-.footer-links a {
-  color: rgba(231, 222, 206, 0.74);
-}
-
-.footer-note {
-  grid-column: 1 / -1;
-  padding-top: 18px;
-  border-top: 1px solid rgba(231, 222, 206, 0.08);
-}
-
-.reveal {
-  opacity: 1;
-  transform: none;
-}
-
-.js-enabled .reveal {
-  opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.js-enabled .reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.reveal-delay-1 {
-  transition-delay: 0.08s;
-}
-
-.reveal-delay-2 {
-  transition-delay: 0.16s;
-}
-
-.reveal-delay-3 {
-  transition-delay: 0.24s;
-}
-
-.reveal-delay-4 {
-  transition-delay: 0.32s;
-}
-
-@keyframes pulseOrbit {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes liftPlane {
-  0%,
-  100% {
-    transform: rotateX(72deg) rotateZ(-28deg) translateZ(128px) translateY(0);
-  }
-  50% {
-    transform: rotateX(72deg) rotateZ(-28deg) translateZ(148px) translateY(-8px);
-  }
-}
-
-@media (pointer: fine) {
-  .js-enabled body {
-    cursor: none;
-  }
-
-  .js-enabled .cursor-dot,
-  .js-enabled .cursor-ring {
-    opacity: 1;
-  }
-
-  .js-enabled a,
-  .js-enabled button,
-  .js-enabled summary,
-  .js-enabled input,
-  .js-enabled select,
-  .js-enabled textarea {
-    cursor: none;
-  }
-}
-
-@media (max-width: 1080px) {
-  .hero {
-    grid-template-columns: 1fr;
-    padding-top: 56px;
-  }
-
-  .hero-visual {
-    justify-content: stretch;
-  }
-
-  .hero-frame {
-    width: 100%;
-  }
-
-  .metrics,
-  .program-grid,
-  .results-strip,
-  .testimonial-grid,
-  .studio-grid,
-  .contact,
-  .feature-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .journey-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .studio-tile-large {
-    grid-row: auto;
-    min-height: 320px;
-  }
-
-  .footer {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-links {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 820px) {
-  .site-shell {
-    inset: 14px;
-    border-radius: 24px;
-  }
-
-  .topbar {
-    width: min(calc(100% - 28px), var(--max-width));
-    top: 14px;
-    margin-top: 14px;
-    padding: 16px 18px;
-  }
-
-  .menu-toggle {
-    display: inline-block;
-  }
-
-  .nav {
-    position: absolute;
-    top: calc(100% + 12px);
-    left: 0;
-    right: 0;
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 18px;
-    border-radius: 20px;
-    background: rgba(9, 11, 15, 0.96);
-    border: 1px solid rgba(231, 222, 206, 0.08);
-  }
-
-  .nav.is-open {
-    display: flex;
-  }
-
-  .nav-cta {
-    text-align: center;
-  }
-
-  .hero,
-  .metrics,
-  .section,
-  .footer {
-    width: min(calc(100% - 28px), var(--max-width));
-  }
-
-  .hero-title {
-    font-size: clamp(2.9rem, 14vw, 4.8rem);
-  }
-
-  .metrics,
-  .program-grid,
-  .journey-grid,
-  .feature-list,
-  .results-strip,
-  .testimonial-grid,
-  .studio-grid,
-  .contact,
-  .contact-meta,
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .model-stage {
-    height: 380px;
-  }
-
-  .stage-ring-one {
-    width: 280px;
-    height: 280px;
-    left: 48px;
-    top: 44px;
-  }
-
-  .stage-ring-two {
-    width: 180px;
-    height: 180px;
-    left: 98px;
-    top: 95px;
-  }
-
-  .mass-base {
-    top: 240px;
-  }
-
-  .mass-core {
-    top: 164px;
-  }
-
-  .mass-cantilever {
-    top: 122px;
-  }
-
-  .mass-lift {
-    top: 84px;
-  }
-
-  .axis-y {
-    right: 16px;
-  }
-
-  .footer {
-    padding-bottom: 28px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ray Arch Academy prepares future architects and designers for NATA, JEE B.Arch, NIFT, NID, BDes and portfolio admissions through architect-led studio training.">
+  <title>Ray Arch Academy | Architect-Led Entrance Coaching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add("js-enabled");</script>
+</head>
+<body>
+  <div class="site-shell"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#hero" aria-label="Ray Arch Academy home">
+      <span class="brand-mark">R</span>
+      <span class="brand-text">
+        <strong>Ray Arch Academy</strong>
+        <small>Architect-led coaching for creative entrances</small>
+      </span>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="siteNav" aria-label="Open navigation">
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav" id="siteNav" aria-label="Primary navigation">
+      <a href="#programs">Programs</a>
+      <a href="#journey">Method</a>
+      <a href="#results">Results</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-cta" href="#contact">Book a Counselling Call</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-copy">
+        <p class="eyebrow reveal">Architecture and design entrance coaching</p>
+        <h1 class="hero-title reveal reveal-delay-1">
+          Where raw
+          <span>imagination</span>
+          learns structure.
+        </h1>
+        <p class="hero-text reveal reveal-delay-2">
+          Ray Arch Academy helps students crack NATA, JEE B.Arch, NIFT, NID and BDes admissions through architect-led studio sessions, drawing critique, aptitude prep and portfolio mentoring.
+        </p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a class="button button-primary" href="#contact">Apply for Guidance</a>
+          <a class="button button-secondary" href="#programs">Explore Programs</a>
+        </div>
+        <ul class="hero-points reveal reveal-delay-4" aria-label="Highlights">
+          <li>1200+ students trained</li>
+          <li>94% reported selection rate</li>
+          <li>Practicing architect mentors</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual reveal reveal-delay-2">
+        <div class="hero-frame">
+          <div class="grid-plane"></div>
+          <div class="model-stage" id="modelStage">
+            <div class="stage-ring stage-ring-one"></div>
+            <div class="stage-ring stage-ring-two"></div>
+            <div class="mass mass-base"></div>
+            <div class="mass mass-core"></div>
+            <div class="mass mass-cantilever"></div>
+            <div class="mass mass-lift"></div>
+            <div class="axis axis-x">vision</div>
+            <div class="axis axis-y">discipline</div>
+            <div class="axis axis-z">execution</div>
+          </div>
+          <div class="hero-caption">
+            <div>
+              <span>Studio Logic</span>
+              <strong>Observe - Draw - Critique - Perform</strong>
+            </div>
+            <p>Built from your concept: a cinematic architectural identity, made practical for real admissions and enquiries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <article class="metric reveal">
+        <strong data-count="1200">1200+</strong>
+        <span>Students trained across architecture and design entrances</span>
+      </article>
+      <article class="metric reveal reveal-delay-1">
+        <strong data-count="94">94%</strong>
+        <span>Selection rate claimed in the existing academy draft</span>
+      </article>
+      <article class="metric reveal reveal-delay-2">
+        <strong data-count="8">8+</strong>
+        <span>Years shaping entrance preparation with studio discipline</span>
+      </article>
+      <article class="metric reveal reveal-delay-3">
+        <strong data-count="45">45+</strong>
+        <span>Colleges reached through student selections and admissions</span>
+      </article>
+    </section>
+
+    <section class="programs section" id="programs">
+      <div class="section-head">
+        <p class="eyebrow reveal">Program Atlas</p>
+        <h2 class="section-title reveal reveal-delay-1">Every path mapped from exam pressure to creative confidence.</h2>
+        <p class="section-text reveal reveal-delay-2">
+          The academy draft already had strong program depth. Here it is reorganized into a cleaner high-conversion structure that feels premium and easy to browse.
+        </p>
+      </div>
+
+      <div class="program-grid">
+        <article class="program-card reveal">
+          <div class="program-number">01</div>
+          <h3>NATA Studio</h3>
+          <p>Drawing, visual composition, observation, architecture awareness, timed mocks and performance review.</p>
+          <ul>
+            <li>Freehand drawing practice</li>
+            <li>Aesthetic sensitivity and composition</li>
+            <li>Mock tests with critique</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-1">
+          <div class="program-number">02</div>
+          <h3>JEE B.Arch</h3>
+          <p>Focused support for aptitude, mathematics, spatial reasoning and pressure-tested exam strategy.</p>
+          <ul>
+            <li>Paper 2 readiness</li>
+            <li>3D visualization thinking</li>
+            <li>Problem-solving drills</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-2">
+          <div class="program-number">03</div>
+          <h3>NIFT / NID / BDes</h3>
+          <p>Creative entrance coaching for design schools with portfolio-building, concept development and interview readiness.</p>
+          <ul>
+            <li>Design aptitude development</li>
+            <li>Creative ability and ideation</li>
+            <li>Portfolio guidance</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-3">
+          <div class="program-number">04</div>
+          <h3>Crash and Repeaters Batch</h3>
+          <p>Short, intense preparation cycles for students who need structure, speed and close tracking.</p>
+          <ul>
+            <li>60-day intensive rhythm</li>
+            <li>Daily targets and reviews</li>
+            <li>One-to-one correction loops</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal">
+          <div class="program-number">05</div>
+          <h3>Portfolio Mentorship</h3>
+          <p>For students applying beyond exams: curated portfolio stories, presentation language and admissions support.</p>
+          <ul>
+            <li>Project selection and editing</li>
+            <li>Layout and storytelling guidance</li>
+            <li>Interview preparation</li>
+          </ul>
+        </article>
+
+        <article class="program-card reveal reveal-delay-1">
+          <div class="program-number">06</div>
+          <h3>Software Foundation</h3>
+          <p>Borrowed from your concept: extend from entrance prep into digital practice with drafting, BIM and visualization tools.</p>
+          <ul>
+            <li>AutoCAD and drafting basics</li>
+            <li>Revit and BIM thinking</li>
+            <li>SketchUp, Lumion and render workflows</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="journey section" id="journey">
+      <div class="journey-intro">
+        <p class="eyebrow reveal">Studio Method</p>
+        <h2 class="section-title reveal reveal-delay-1">A training process that feels like architecture, not coaching-factory routine.</h2>
+      </div>
+
+      <div class="journey-grid">
+        <article class="journey-step reveal">
+          <span>Phase 01</span>
+          <h3>Observe the world like a designer</h3>
+          <p>Students learn to see proportion, light, form and spatial relationships before chasing marks.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-1">
+          <span>Phase 02</span>
+          <h3>Draw with speed and clarity</h3>
+          <p>Weekly sketch drills and corrections transform hesitation into reliable exam performance.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-2">
+          <span>Phase 03</span>
+          <h3>Think through aptitude and logic</h3>
+          <p>Math, reasoning and exam pattern training are taught with structure, not panic.</p>
+        </article>
+        <article class="journey-step reveal reveal-delay-3">
+          <span>Phase 04</span>
+          <h3>Present work like a future professional</h3>
+          <p>Portfolio, software and presentation guidance help students cross from exam prep into actual design culture.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="why section">
+      <div class="why-panel reveal">
+        <p class="eyebrow">Why families choose Ray Arch Academy</p>
+        <h2 class="section-title">Mentorship with design sensibility, not generic tuition energy.</h2>
+      </div>
+
+      <div class="feature-list">
+        <article class="feature-card reveal">
+          <h3>Practicing architect faculty</h3>
+          <p>The strongest point in your existing draft stays central here: students learn from professionals who work inside architecture and design.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-1">
+          <h3>Small batches and personal review</h3>
+          <p>Feedback loops matter in creative entrances. Smaller groups mean individual correction instead of passive attendance.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-2">
+          <h3>Exam pattern plus studio discipline</h3>
+          <p>Students get both marks-driven strategy and real visual training, which is what makes results feel durable.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-3">
+          <h3>Beyond entrance coaching</h3>
+          <p>The site also introduces your broader academy ambition: software, portfolio and visualization training for the next stage.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="results section" id="results">
+      <div class="section-head">
+        <p class="eyebrow reveal">Selected Outcomes</p>
+        <h2 class="section-title reveal reveal-delay-1">Recent names, ranks and destinations presented with more polish.</h2>
+      </div>
+
+      <div class="results-strip">
+        <article class="result-card reveal">
+          <span>NATA 2024</span>
+          <h3>Aarav Mehta</h3>
+          <strong>172 / 200</strong>
+          <p>SPA New Delhi</p>
+        </article>
+        <article class="result-card reveal reveal-delay-1">
+          <span>JEE B.Arch 2024</span>
+          <h3>Rahul Sharma</h3>
+          <strong>98.4 percentile</strong>
+          <p>NIT Trichy</p>
+        </article>
+        <article class="result-card reveal reveal-delay-2">
+          <span>NID DAT 2024</span>
+          <h3>Sneha Iyer</h3>
+          <strong>Selected</strong>
+          <p>NID Ahmedabad</p>
+        </article>
+        <article class="result-card reveal reveal-delay-3">
+          <span>NIFT 2024</span>
+          <h3>Priya Nair</h3>
+          <strong>Selected</strong>
+          <p>NIFT Mumbai</p>
+        </article>
+      </div>
+
+      <div class="testimonial-grid">
+        <blockquote class="testimonial reveal">
+          <p>"They did not just train me to crack NATA. They trained me to think like an architect and trust my own drawing process."</p>
+          <footer>Aarav Mehta, NATA 2024</footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-1">
+          <p>"Small batches meant every class came with feedback. That one change improved both my confidence and my score."</p>
+          <footer>Rahul Sharma, JEE B.Arch 2024</footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-2">
+          <p>"The portfolio guidance felt serious and professional. It was not random decoration, it was actual design thinking."</p>
+          <footer>Sneha Iyer, NID DAT 2024</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="studio section" id="studio">
+      <div class="section-head">
+        <p class="eyebrow reveal">Studio Atmosphere</p>
+        <h2 class="section-title reveal reveal-delay-1">A visual language that feels premium even without photography.</h2>
+      </div>
+
+      <div class="studio-grid">
+        <article class="studio-tile studio-tile-large reveal">
+          <div class="tile-art tile-art-lines"></div>
+          <div class="tile-copy">
+            <span>Drawing Lab</span>
+            <h3>Perspective, memory sketching and timed composition practice</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-1">
+          <div class="tile-art tile-art-orbit"></div>
+          <div class="tile-copy">
+            <span>Crit Room</span>
+            <h3>Weekly design critique and personal feedback</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-2">
+          <div class="tile-art tile-art-grid"></div>
+          <div class="tile-copy">
+            <span>Mock Zone</span>
+            <h3>Pressure-tested exams that simulate real timing</h3>
+          </div>
+        </article>
+        <article class="studio-tile reveal reveal-delay-3">
+          <div class="tile-art tile-art-glow"></div>
+          <div class="tile-copy">
+            <span>Digital Desk</span>
+            <h3>AutoCAD, Revit, SketchUp and render basics</h3>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="faq section">
+      <div class="section-head">
+        <p class="eyebrow reveal">Common Questions</p>
+        <h2 class="section-title reveal reveal-delay-1">Information parents and students usually want first.</h2>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Who is this academy best suited for?</summary>
+          <p>Students preparing for architecture or design entrances, especially those targeting NATA, JEE B.Arch, NIFT, NID or portfolio-based admissions.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-1">
+          <summary>Do you only coach for exams?</summary>
+          <p>No. The site now reflects your broader concept too: entrance preparation, portfolio support and software foundation for students moving into design school.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-2">
+          <summary>How are batches managed?</summary>
+          <p>The existing draft emphasized small batches and personal attention, so the site positions that as a core promise across regular, crash and guidance formats.</p>
+        </details>
+        <details class="faq-item reveal reveal-delay-3">
+          <summary>How should a new student start?</summary>
+          <p>Start with a counselling conversation so the academy can recommend the right track based on class level, target exam and current portfolio or drawing ability.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="contact section" id="contact">
+      <div class="contact-panel reveal">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="section-title">Build the right path before the exams begin.</h2>
+        <p class="section-text">
+          Based on the details in your existing draft, the contact block below keeps the phone and email ready for real use while the enquiry form gives the page a strong conversion endpoint.
+        </p>
+
+        <div class="contact-meta">
+          <a href="tel:+919876543210">
+            <span>Phone</span>
+            <strong>+91 98765 43210</strong>
+          </a>
+          <a href="mailto:hello@rayarchacademy.in">
+            <span>Email</span>
+            <strong>hello@rayarchacademy.in</strong>
+          </a>
+          <div>
+            <span>Studio</span>
+            <strong>Ray Design and Build Studio, India</strong>
+          </div>
+          <div>
+            <span>Formats</span>
+            <strong>Regular batch / Crash batch / Online guidance</strong>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-1" id="contactForm">
+        <div class="form-row">
+          <label>
+            <span>Student name</span>
+            <input type="text" name="studentName" placeholder="Aarav Mehta" required>
+          </label>
+          <label>
+            <span>Phone number</span>
+            <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            <span>Email address</span>
+            <input type="email" name="email" placeholder="student@email.com">
+          </label>
+          <label>
+            <span>Program of interest</span>
+            <select name="program" required>
+              <option value="">Select a program</option>
+              <option>NATA Studio</option>
+              <option>JEE B.Arch</option>
+              <option>NIFT / NID / BDes</option>
+              <option>Crash and Repeaters Batch</option>
+              <option>Portfolio Mentorship</option>
+              <option>Software Foundation</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>Current class or level</span>
+          <select name="level" required>
+            <option value="">Select level</option>
+            <option>Class 10</option>
+            <option>Class 11</option>
+            <option>Class 12</option>
+            <option>Dropper</option>
+            <option>College student</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Goals</span>
+          <textarea name="message" placeholder="Tell us which exam or college you are targeting."></textarea>
+        </label>
+
+        <button type="submit" class="button button-primary form-submit">Send Enquiry</button>
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <a class="brand" href="#hero">
+        <span class="brand-mark">R</span>
+        <span class="brand-text">
+          <strong>Ray Arch Academy</strong>
+          <small>A Ray Design and Build initiative</small>
+        </span>
+      </a>
+      <p>Shaping future architects and designers through disciplined studio coaching, exam clarity and design culture.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="#programs">Programs</a>
+      <a href="#journey">Method</a>
+      <a href="#results">Results</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <p class="footer-note">
+      <span id="year"></span> Ray Arch Academy. Crafted from your concept direction and existing academy details.
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
